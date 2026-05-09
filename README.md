@@ -130,16 +130,17 @@ A courier tracking and payment confirmation website with Telegram integration, d
 | `PORT` | No | Server port (default: 3000, Railway sets automatically) |
 | `NODE_ENV` | No | Environment (development/production) |
 | `RATE_LIMIT_WINDOW_MS` | No | Rate limit window in milliseconds (default: 900000) |
-| `RATE_LIMIT_MAX_REQUESTS` | No | Max requests per window (default: 5) |
+| `RATE_LIMIT_MAX_REQUESTS` | No | Max form submissions per window per IP (default: 20) |
 
 ## Bot Detection Features
 
-The application includes multiple layers of bot detection:
+The application includes multiple layers of bot detection that are **deliberately tuned to let real humans through**. Only obvious automated traffic is blocked.
 
-1. **Honeypot Field**: Hidden field that bots typically fill out
-2. **Rate Limiting**: Prevents rapid-fire submissions from same IP
-3. **Timing Check**: Ensures form isn't submitted too quickly
-4. **User-Agent Validation**: Checks for valid browser user agents
+1. **Honeypot Field** (`company_url`): Hidden input that bots typically auto-fill. Real users never see or interact with it.
+2. **Rate Limiting**: 20 form submissions per 15 minutes per IP (lenient enough for shared NAT/office networks).
+3. **Timing Check**: Blocks only submissions that arrive less than **1 second** after page load — a real human cannot read and click that fast. If the timestamp is missing or invalid, the submission is **not** blocked (so users with JS disabled or unusual browsers still work).
+4. **User-Agent Pattern Match**: Blocks only well-known automation signatures (`curl`, `wget`, `python-requests`, `Go-http-client`, `okhttp`, `scrapy`, `phantomjs`, `selenium`, `puppeteer`, `playwright`, generic `bot`/`crawler`/`spider`). A missing User-Agent is **not** blocked (some privacy tools strip it).
+5. **Session Token**: A 20–30 character random token is generated in the browser on visit, stored in `sessionStorage`, and submitted with the form. Useful for correlating submissions and detecting replays.
 
 ## API Endpoints
 
@@ -153,6 +154,7 @@ The application includes multiple layers of bot detection:
 When a form is submitted, the following data is sent to Telegram:
 
 - Payment method selection
+- Session token (20–30 char browser-generated identifier)
 - Timestamp
 - IP address
 - User agent

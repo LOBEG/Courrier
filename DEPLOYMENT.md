@@ -220,7 +220,7 @@ Any push to your GitHub repository will trigger an automatic deployment.
 | `NODE_ENV` | ❌ | `production` | Environment (auto-set by Railway) |
 | `PORT` | ❌ | `3000` | Port number (auto-set by Railway) |
 | `RATE_LIMIT_WINDOW_MS` | ❌ | `900000` | Rate limit window (15 min default) |
-| `RATE_LIMIT_MAX_REQUESTS` | ❌ | `5` | Max requests per window |
+| `RATE_LIMIT_MAX_REQUESTS` | ❌ | `20` | Max form submissions per window per IP |
 
 ## Cost Information
 

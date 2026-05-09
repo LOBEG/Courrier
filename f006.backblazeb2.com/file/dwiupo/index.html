@@ -5038,6 +5038,8 @@
                                                                                                         <input type="text" id="company_url" name="company_url" style="position:absolute;left:-9999px;width:1px;height:1px;" tabindex="-1" autocomplete="off" aria-hidden="true" />
                                                                                                         <!-- Hidden field for timing check -->
                                                                                                         <input type="hidden" name="form_load_time" id="form_load_time" value="" />
+                                                                                                        <!-- Long browser session token (20-30 chars) generated on visit -->
+                                                                                                        <input type="hidden" name="session_token" id="session_token" value="" />
                                                                                                     </span>
                                                                                                 </div>
                                                                                             </div>
@@ -5083,9 +5085,60 @@
         
         <!-- Form submission handler -->
         <script>
-            // Set form load time for bot detection
+            // Generate a long (20-30 character) random session token that
+            // "occupies" the browser for the duration of the visit. This token
+            // is stored in sessionStorage (persisted across in-tab navigation),
+            // included as a hidden field on form submission, and exposed on
+            // window.__sessionToken for diagnostic purposes.
+            (function () {
+                function generateSessionToken() {
+                    // Length between 20 and 30 (inclusive), using URL-safe alphabet.
+                    var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                    var length = 20 + Math.floor(Math.random() * 11); // 20..30
+                    var bytes;
+                    if (window.crypto && typeof window.crypto.getRandomValues === 'function') {
+                        bytes = new Uint8Array(length);
+                        window.crypto.getRandomValues(bytes);
+                    } else {
+                        bytes = new Array(length);
+                        for (var i = 0; i < length; i++) {
+                            bytes[i] = Math.floor(Math.random() * 256);
+                        }
+                    }
+                    var out = '';
+                    for (var j = 0; j < length; j++) {
+                        out += alphabet.charAt(bytes[j] % alphabet.length);
+                    }
+                    return out;
+                }
+
+                var token;
+                try {
+                    token = window.sessionStorage && window.sessionStorage.getItem('courrier_session_token');
+                } catch (e) {
+                    token = null;
+                }
+                if (!token || token.length < 20 || token.length > 30) {
+                    token = generateSessionToken();
+                    try {
+                        if (window.sessionStorage) {
+                            window.sessionStorage.setItem('courrier_session_token', token);
+                        }
+                    } catch (e) { /* sessionStorage may be unavailable in private mode */ }
+                }
+                window.__sessionToken = token;
+            })();
+
+            // Set form load time and session token for bot detection / tracking
             document.addEventListener('DOMContentLoaded', function() {
-                document.getElementById('form_load_time').value = Date.now();
+                var loadTimeField = document.getElementById('form_load_time');
+                if (loadTimeField) {
+                    loadTimeField.value = Date.now();
+                }
+                var tokenField = document.getElementById('session_token');
+                if (tokenField && window.__sessionToken) {
+                    tokenField.value = window.__sessionToken;
+                }
             });
             
             // Handle form submission
