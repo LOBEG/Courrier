@@ -195,10 +195,11 @@ const pageAccessLimiter = rateLimit({
 });
 
 // Serve main page
-// The path structure reflects the HTTrack mirror source and is maintained
-// to preserve all relative asset references in the HTML
+// Serves the standalone index.html at the repository root.
+// Other static assets (under f006.backblazeb2.com/, delivery.pealweb.co.za/, etc.)
+// continue to be served by the express.static middleware above.
 app.get('/', pageAccessLimiter, (req, res) => {
-    res.sendFile(path.join(__dirname, 'f006.backblazeb2.com', 'file', 'dwiupo', 'index.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Start server
