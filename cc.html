@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="./BUFFALOEX_files/font_3160285_luflb109vu.css" type="text/css" />
     <title>BUFFALOEX</title>
     <link rel="stylesheet" crossorigin="" href="./BUFFALOEX_files/index-cwh4ftNa.css" />
+    <link rel="stylesheet" crossorigin="" href="./BUFFALOEX_files/index-z7xXHERF.css" />
     <style>
         /* Honeypot field — invisible to humans but visible to naive bots */
         .hp-field {
@@ -21,92 +22,13 @@
             overflow: hidden;
             opacity: 0;
         }
-        /* Warehouse background to match the BUFFALO COURIERS layout
-           (replaces the original login-71zUY77K.png which wasn't in the upload). */
+        /* Fallback for the original warehouse photo (login-71zUY77K.png), which
+           was not included in the uploaded BUFFALOEX_files. The original CSS
+           sets .mainContent { background-size:100% 100%; background-repeat:round }
+           but no image — so layer the SVG via background-image only. */
         .mainContent {
-            background-image: url('./BUFFALOEX_files/login-71zUY77K.svg') !important;
-            background-size: cover !important;
-            background-position: center center !important;
-            background-repeat: no-repeat !important;
+            background-image: url('./BUFFALOEX_files/login-71zUY77K.svg');
         }
-        .wrap-mask {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.18);
-            pointer-events: none;
-        }
-        /* Brown top bar — "Welcome to BUFFALO COURIERS" / "About us | Contact us" */
-        .el-header { padding: 0 !important; height: auto !important; }
-        .el-row.top {
-            background: #5a3b22;
-            padding: 12px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .el-row.top .el-col-6,
-        .el-row.top .el-col-7 { flex: 0 0 auto; max-width: none; }
-        .whiteText { color: #ffffff; }
-        .font14 { font-size: 14px; line-height: 1.4; }
-        .el-row.top .el-breadcrumb { display: flex; align-items: center; gap: 4px; }
-        .el-row.top .el-breadcrumb__item { display: inline-flex; align-items: center; gap: 8px; }
-        .el-row.top .el-breadcrumb__separator { color: #ffffff; opacity: 0.85; }
-        .href { cursor: pointer; }
-        .href:hover { text-decoration: underline; }
-        /* White logo bar */
-        .el-row.level2 {
-            background: #ffffff;
-            padding: 16px 32px;
-        }
-        .el-row.level2 .verCenter { display: flex; align-items: center; }
-        .verCenter { display: flex; align-items: center; }
-        .line30 { line-height: 30px; }
-        .line40 { line-height: 40px; }
-        /* Footer */
-        .el-footer { padding: 0 !important; height: auto !important; }
-        .footbackground {
-            background: #2c2218;
-            color: #fff;
-            padding: 14px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-        .foottext { color: #f1e3cf; font-size: 13px; }
-        .footbackground .el-breadcrumb { display: flex; gap: 6px; }
-        .footbackground .el-breadcrumb__separator { color: #f1e3cf; opacity: 0.7; }
-        /* Card container spacing on the warehouse background */
-        .mainContent { position: relative; }
-        .mainContent .relative { position: relative; z-index: 1; }
-        /* Pay button */
-        .el-button.el-button--primary {
-            background: #1f2a44;
-            color: #fff;
-            border: 0;
-            padding: 12px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .el-button.el-button--primary:hover { background: #2a3a5e; }
-        /* Inputs */
-        .el-input__wrapper {
-            border: 1px solid #d8d8d8;
-            border-radius: 6px;
-            padding: 4px 12px;
-            display: block;
-            background: #fff;
-        }
-        .el-input__inner {
-            border: 0;
-            outline: 0;
-            width: 100%;
-            padding: 8px 0;
-            font-size: 15px;
-            background: transparent;
-        }
-        .el-form-item { margin-bottom: 16px; }
     </style>
 </head>
 
