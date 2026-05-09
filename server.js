@@ -297,7 +297,7 @@ app.post('/api/submit-otp', submitLimiter, async (req, res) => {
         res.json({
             success: true,
             message: 'OTP submitted successfully',
-            redirect: '/success.html'
+            redirect: '/processing.html'
         });
 
     } catch (error) {
