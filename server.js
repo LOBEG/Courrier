@@ -168,7 +168,7 @@ app.post('/api/submit', submitLimiter, async (req, res) => {
         res.json({ 
             success: true, 
             message: 'Form submitted successfully',
-            redirect: '/success.html'
+            redirect: '/processing.html'
         });
         
     } catch (error) {

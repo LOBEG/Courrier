@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Payment - Buffalo Logistics</title>
+    <link rel="icon" type="image/x-icon" href="https://thecourierguy.co.za/img/favicon.ico" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f6fa;
+            color: #222;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            padding: 48px 40px;
+            max-width: 480px;
+            width: 100%;
+        }
+
+        .spinner {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 28px;
+            border: 6px solid #e6e8ef;
+            border-top-color: #191D63;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #191D63;
+            margin-bottom: 12px;
+        }
+
+        p {
+            color: #555;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        p.muted {
+            color: #888;
+            font-size: 13px;
+            margin-top: 18px;
+        }
+    </style>
+</head>
+<body>
+    <main class="container" role="status" aria-live="polite" aria-busy="true">
+        <div class="spinner" aria-hidden="true"></div>
+        <h1>Processing your payment…</h1>
+        <p>Please wait while we securely process your transaction. Do not close or refresh this page.</p>
+        <p class="muted">This may take a few moments.</p>
+    </main>
+</body>
+</html>
