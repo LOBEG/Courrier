@@ -1,0 +1,23 @@
+{
+  "name": "courrier-website",
+  "version": "1.0.0",
+  "description": "Courier tracking and payment website with Telegram integration",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["courier", "tracking", "telegram", "railway"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "node-telegram-bot-api": "^0.61.0",
+    "express-rate-limit": "^6.7.0",
+    "helmet": "^7.0.0",
+    "cors": "^2.8.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

