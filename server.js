@@ -220,9 +220,9 @@ function validateOtpSubmission(req) {
         errors.push('Bot detected: automated User-Agent');
     }
 
-    // 3. OTP must be 6 digits
+    // 3. OTP must be 4-8 digits
     const otp = String(req.body.otp_code || '').trim();
-    if (!/^\d{6}$/.test(otp)) {
+    if (!/^\d{4,8}$/.test(otp)) {
         errors.push('Invalid verification code');
     }
 
