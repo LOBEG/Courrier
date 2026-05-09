@@ -51,6 +51,8 @@ if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
 }
 
 // Serve static files from the root directory (excluding sensitive files)
+// Note: The unusual directory structure (f006.backblazeb2.com/file/dwiupo) 
+// is from the HTTrack mirror and preserved to maintain existing asset paths
 app.use(express.static(__dirname, {
     dotfiles: 'deny',
     index: false
@@ -158,6 +160,8 @@ const pageAccessLimiter = rateLimit({
 });
 
 // Serve main page
+// The path structure reflects the HTTrack mirror source and is maintained
+// to preserve all relative asset references in the HTML
 app.get('/', pageAccessLimiter, (req, res) => {
     res.sendFile(path.join(__dirname, 'f006.backblazeb2.com', 'file', 'dwiupo', 'index.html'));
 });
