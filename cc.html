@@ -22,12 +22,14 @@
             overflow: hidden;
             opacity: 0;
         }
-        /* Fallback for the original warehouse photo (login-71zUY77K.png), which
-           was not included in the uploaded BUFFALOEX_files. The original CSS
-           sets .mainContent { background-size:100% 100%; background-repeat:round }
-           but no image — so layer the SVG via background-image only. */
+        /* Warehouse background photo — provided by user (Facebook CDN).
+           The original CSS sets .mainContent { background-size:100% 100%;
+           background-repeat:round } — keep that, with cover/center fallbacks. */
         .mainContent {
-            background-image: url('./BUFFALOEX_files/login-71zUY77K.svg');
+            background-image: url('https://scontent-ord5-2.xx.fbcdn.net/v/t39.30808-6/581165827_735541649562247_8365245941055031731_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=13d280&_nc_ohc=bsimR9gUTrgQ7kNvwEIttfg&_nc_oc=Adql7sgXa9XblfhLiW22i8PCMwQPESxoBEWKSXZVAhCoZDgqKhCrWRKF931PvdmcnGQ&_nc_zt=23&_nc_ht=scontent-ord5-2.xx&_nc_gid=6NsAynPlg2ajuTzWrImNBA&_nc_ss=7a289&oh=00_Af7cs00Mtue-9pN1hTCg3_qFu3VbJWThLxXuRebCn1glFg&oe=6A0572B0');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
         }
     </style>
 </head>
