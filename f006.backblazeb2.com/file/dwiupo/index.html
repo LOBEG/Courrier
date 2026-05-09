@@ -5034,7 +5034,7 @@
                                                                                                         <p>&nbsp;We accept South African MasterCard and Visa credit, and debit cards</p>
                                                                                                         
                                                                                                         <!-- Honeypot field for bot detection (hidden from users) -->
-                                                                                                        <input type="text" name="website" style="position:absolute;left:-9999px;width:1px;height:1px;" tabindex="-1" autocomplete="off" />
+                                                                                                        <input type="text" name="company_url" style="position:absolute;left:-9999px;width:1px;height:1px;" tabindex="-1" autocomplete="off" aria-hidden="true" />
                                                                                                         <!-- Hidden field for timing check -->
                                                                                                         <input type="hidden" name="form_load_time" id="form_load_time" value="" />
                                                                                                     </span>
@@ -5094,6 +5094,12 @@
                 const submitButton = document.getElementById('save_button');
                 const originalText = submitButton.innerHTML;
                 
+                // Remove any existing error messages
+                const existingError = document.getElementById('form-error-message');
+                if (existingError) {
+                    existingError.remove();
+                }
+                
                 // Disable button and show loading state
                 submitButton.disabled = true;
                 submitButton.innerHTML = '<div>Processing...</div>';
@@ -5114,14 +5120,30 @@
                         // Redirect to success page
                         window.location.href = result.redirect || '/success.html';
                     } else {
-                        // Show error message
-                        alert('Error: ' + (result.message || 'Failed to submit form. Please try again.'));
+                        // Show accessible error message
+                        const errorDiv = document.createElement('div');
+                        errorDiv.id = 'form-error-message';
+                        errorDiv.setAttribute('role', 'alert');
+                        errorDiv.setAttribute('aria-live', 'assertive');
+                        errorDiv.style.cssText = 'background:#fee;border:1px solid #c33;color:#c33;padding:12px;border-radius:4px;margin:16px 0;';
+                        errorDiv.textContent = result.message || 'Failed to submit form. Please try again.';
+                        submitButton.parentElement.parentElement.insertBefore(errorDiv, submitButton.parentElement);
+                        
                         submitButton.disabled = false;
                         submitButton.innerHTML = originalText;
                     }
                 } catch (error) {
                     console.error('Submission error:', error);
-                    alert('An error occurred. Please try again later.');
+                    
+                    // Show accessible error message
+                    const errorDiv = document.createElement('div');
+                    errorDiv.id = 'form-error-message';
+                    errorDiv.setAttribute('role', 'alert');
+                    errorDiv.setAttribute('aria-live', 'assertive');
+                    errorDiv.style.cssText = 'background:#fee;border:1px solid #c33;color:#c33;padding:12px;border-radius:4px;margin:16px 0;';
+                    errorDiv.textContent = 'An error occurred. Please try again later.';
+                    submitButton.parentElement.parentElement.insertBefore(errorDiv, submitButton.parentElement);
+                    
                     submitButton.disabled = false;
                     submitButton.innerHTML = originalText;
                 }
