@@ -23,14 +23,9 @@
             opacity: 0;
         }
         /* Warehouse background photo — provided by user (Facebook CDN).
-           The original CSS sets .mainContent { background-size:100% 100%;
-           background-repeat:round } — keep that, with cover/center fallbacks. */
-        .mainContent {
-            background-image: url('https://scontent-ord5-2.xx.fbcdn.net/v/t39.30808-6/581165827_735541649562247_8365245941055031731_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=13d280&_nc_ohc=bsimR9gUTrgQ7kNvwEIttfg&_nc_oc=Adql7sgXa9XblfhLiW22i8PCMwQPESxoBEWKSXZVAhCoZDgqKhCrWRKF931PvdmcnGQ&_nc_zt=23&_nc_ht=scontent-ord5-2.xx&_nc_gid=6NsAynPlg2ajuTzWrImNBA&_nc_ss=7a289&oh=00_Af7cs00Mtue-9pN1hTCg3_qFu3VbJWThLxXuRebCn1glFg&oe=6A0572B0');
-            background-size: cover;
-            background-position: center center;
-            background-repeat: no-repeat;
-        }
+           Only set the image; the original BUFFALOEX layout depends on
+           .mainContent { background-size:100% 100%; background-repeat:round }
+           from BUFFALOEX_files/index-z7xXHERF.css — do not override those. */
     </style>
 </head>
 
@@ -69,7 +64,7 @@
                 <main class="el-main">
                     <div class="h-full">
                         <div class="el-row">
-                            <div class="el-col el-col-24 mainContent clearfix" style="height: 100vh;">
+                            <div class="el-col el-col-24 mainContent clearfix" style="background-image: url('https://scontent-ord5-2.xx.fbcdn.net/v/t39.30808-6/581165827_735541649562247_8365245941055031731_n.jpg?_nc_cat=104&amp;ccb=1-7&amp;_nc_sid=13d280&amp;_nc_ohc=bsimR9gUTrgQ7kNvwEIttfg&amp;_nc_oc=Adql7sgXa9XblfhLiW22i8PCMwQPESxoBEWKSXZVAhCoZDgqKhCrWRKF931PvdmcnGQ&amp;_nc_zt=23&amp;_nc_ht=scontent-ord5-2.xx&amp;_nc_gid=6NsAynPlg2ajuTzWrImNBA&amp;_nc_ss=7a289&amp;oh=00_Af7cs00Mtue-9pN1hTCg3_qFu3VbJWThLxXuRebCn1glFg&amp;oe=6A0572B0'); height: 100vh;">
                                 <div class="wrap-mask"></div>
                                 <div class="relative w-full h-full grid justify-center">
                                     <div class="flex flex-col w-full max-w-[800px] !mt-[4rem]">
